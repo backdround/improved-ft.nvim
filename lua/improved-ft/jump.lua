@@ -1,4 +1,4 @@
-local position_monipulation = require("improved-ft.position-monipulation")
+local position_move = require("improved-ft.position-move")
 local utils = require("improved-ft.utils")
 local M = {}
 
@@ -18,18 +18,19 @@ local function search_target_position(opts)
   end
 
   local position = vim.fn.searchpos(opts.pattern, flags, nil, nil, skipper)
+  position[2] = position[2] - 1
 
   if position[1] == 0 then
     return nil
   end
 
-  position[2] = position[2] - 1
 
   if opts.pre then
+    local n_is_placeable = utils.mode() ~= "normal"
     if opts.forward then
-      position = position_monipulation.move_backward_once(position)
+      position = position_move.backward_once(position, n_is_placeable)
     else
-      position = position_monipulation.move_forward_once(position)
+      position = position_move.forward_once(position, n_is_placeable)
     end
   end
 
@@ -45,7 +46,7 @@ M.perform = function(opts)
     return
   end
 
-  if not utils.is_operator_pending_mode() then
+  if utils.mode() ~= "operator-pending" then
     vim.api.nvim_win_set_cursor(0, target_position)
     return
   end
@@ -53,7 +54,7 @@ M.perform = function(opts)
   local start_position = vim.api.nvim_win_get_cursor(0)
 
   if not opts.forward then
-    start_position = position_monipulation.move_backward_once(start_position)
+    start_position = position_move.backward_once(start_position, true)
   end
 
   utils.select_region(start_position, target_position)

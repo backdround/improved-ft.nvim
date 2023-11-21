@@ -8,9 +8,17 @@ M.select_region = function(position1, position2)
   vim.cmd("normal! gv")
 end
 
----@return boolean
-M.is_operator_pending_mode = function()
-  return vim.fn.mode(true):find("o") ~= nil
+---@return "operator-pending"|"visual"|"normal"
+M.mode = function()
+  local m = tostring(vim.fn.mode(true))
+
+  if m:find("o") then
+    return "operator-pending"
+  elseif m:find("[vV]") then
+    return "visual"
+  else
+    return "normal"
+  end
 end
 
 ---Returns current neovim repeat state.
