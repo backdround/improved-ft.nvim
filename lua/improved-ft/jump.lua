@@ -8,7 +8,7 @@ local M = {}
 local function search_target_position(opts)
   local flags = "nW"
   if not opts.forward then
-    flags = flags .. "b"
+    flags = flags .. "be"
   end
 
   local count = opts.count
@@ -22,16 +22,6 @@ local function search_target_position(opts)
 
   if position[1] == 0 then
     return nil
-  end
-
-
-  if opts.pre then
-    local n_is_placeable = utils.mode() ~= "normal"
-    if opts.forward then
-      position = position_move.backward_once(position, n_is_placeable)
-    else
-      position = position_move.forward_once(position, n_is_placeable)
-    end
   end
 
   return position

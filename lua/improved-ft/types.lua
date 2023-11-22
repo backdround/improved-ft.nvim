@@ -8,5 +8,4 @@
 ---@class IFT_JumpOptions
 ---@field forward boolean direction to jump.
 ---@field pattern string pattern to which to jump
----@field pre boolean jump one symbol before pattern
 ---@field count number count of jumps to perform

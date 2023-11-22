@@ -23,7 +23,7 @@ end
 
 ---Returns current neovim repeat state.
 ---@return boolean
-M.is_repeat = function()
+M.is_vim_repeat = function()
   if M._is_repeat == nil then
     M._is_repeat = false
     -- Add repeat tracker
@@ -44,14 +44,9 @@ end
 ---@return string
 M.get_user_inputed_pattern = function()
   local char = vim.fn.getchar()
-  char =  vim.fn.nr2char(char)
-
-  local special_symbols = "^$\\"
-  if vim.go.magic then
-    special_symbols = "*^$.~[]\\"
-  end
-
-  return vim.fn.escape(char, special_symbols)
+  char = vim.fn.nr2char(char)
+  local pattern = "\\M" .. vim.fn.escape(char, "^$\\")
+  return pattern
 end
 
 return M
