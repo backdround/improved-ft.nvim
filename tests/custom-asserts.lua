@@ -6,14 +6,15 @@ local function cursor_at(_, arguments)
   local line = arguments[1]
   local column = arguments[2]
 
-  local cursor_position = vim.api.nvim_win_get_cursor(0)
+  local current_line = vim.fn.line(".")
+  local current_column = vim.fn.virtcol(".") - 1
 
   -- Prepare arguments for assert output
-  table.insert(arguments, 1, cursor_position[1])
-  table.insert(arguments, 2, cursor_position[2])
+  table.insert(arguments, 1, current_line)
+  table.insert(arguments, 2, current_column)
   arguments.nofmt = { 1, 2, 3, 4 }
 
-  return line == cursor_position[1] and column == cursor_position[2]
+  return line == current_line and column == current_column
 end
 
 local function concatenate_lines(lines)

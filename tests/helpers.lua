@@ -51,7 +51,8 @@ M.reset_last_selected_region = function()
 end
 
 M.set_cursor = function(line, column)
-  vim.api.nvim_win_set_cursor(0, {line, column})
+  column = vim.fn.virtcol2col(0, line, column + 1) - 1
+  vim.api.nvim_win_set_cursor(0, { line, column })
 end
 
 M.perform_through_keymap = function(func, additional_keys)

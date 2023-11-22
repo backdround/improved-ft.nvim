@@ -1,0 +1,106 @@
+local ft = require("improved-ft")
+local h = require("tests.helpers")
+
+require("tests.custom-asserts").register()
+
+local function get_preset(buffer_text, cursor_position)
+  return function()
+    h.reset_mode()
+    h.reset_last_selected_region()
+
+    h.set_current_buffer(buffer_text)
+    h.set_cursor(unpack(cursor_position))
+  end
+end
+
+describe("specific-sequences-jump", function()
+  describe("repeating-char", function()
+    before_each(get_preset("aaaaa", { 1, 2 }))
+
+    it("forward", function()
+      h.perform_through_keymap(ft.to_char_forward, "a")
+      assert.cursor_at(1, 3)
+      h.perform_through_keymap(ft.to_char_forward, "a")
+      assert.cursor_at(1, 4)
+    end)
+
+    it("pre-forward", function()
+      h.set_cursor(1, 1)
+      h.perform_through_keymap(ft.to_pre_char_forward, "a")
+      assert.cursor_at(1, 2)
+      h.perform_through_keymap(ft.to_pre_char_forward, "a")
+      assert.cursor_at(1, 3)
+    end)
+
+    it("backward", function()
+      h.perform_through_keymap(ft.to_char_backward, "a")
+      assert.cursor_at(1, 1)
+      h.perform_through_keymap(ft.to_char_backward, "a")
+      assert.cursor_at(1, 0)
+    end)
+
+    it("pre-backward", function()
+      h.set_cursor(1, 3)
+      h.perform_through_keymap(ft.to_pre_char_backward, "a")
+      assert.cursor_at(1, 2)
+      h.perform_through_keymap(ft.to_pre_char_backward, "a")
+      assert.cursor_at(1, 1)
+    end)
+  end)
+
+  describe("alternating-repeating-char", function()
+    before_each(get_preset("a a a a a", { 1, 4 }))
+
+    it("forward", function()
+      h.perform_through_keymap(ft.to_char_forward, "a")
+      assert.cursor_at(1, 6)
+      h.perform_through_keymap(ft.to_char_forward, "a")
+      assert.cursor_at(1, 8)
+    end)
+
+    it("pre-forward", function()
+      h.perform_through_keymap(ft.to_pre_char_forward, "a")
+      assert.cursor_at(1, 5)
+      h.perform_through_keymap(ft.to_pre_char_forward, "a")
+      assert.cursor_at(1, 7)
+    end)
+
+    it("backward", function()
+      h.perform_through_keymap(ft.to_char_backward, "a")
+      assert.cursor_at(1, 2)
+      h.perform_through_keymap(ft.to_char_backward, "a")
+      assert.cursor_at(1, 0)
+    end)
+
+    it("pre-backward", function()
+      h.perform_through_keymap(ft.to_pre_char_backward, "a")
+      assert.cursor_at(1, 3)
+      h.perform_through_keymap(ft.to_pre_char_backward, "a")
+      assert.cursor_at(1, 1)
+    end)
+  end)
+
+  describe("non-ascii-sequence", function()
+    before_each(get_preset("некоторый", { 1, 4 }))
+
+    it("forward", function()
+      h.perform_through_keymap(ft.to_char_forward, "ы")
+      assert.cursor_at(1, 7)
+    end)
+
+    it("pre-forward", function()
+      h.perform_through_keymap(ft.to_pre_char_forward, "ы")
+      assert.cursor_at(1, 6)
+    end)
+
+    it("backward", function()
+      h.perform_through_keymap(ft.to_char_backward, "н")
+      assert.cursor_at(1, 0)
+    end)
+
+    it("pre-backward", function()
+      h.perform_through_keymap(ft.to_pre_char_backward, "н")
+      assert.cursor_at(1, 1)
+    end)
+  end)
+end)

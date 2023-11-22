@@ -1,5 +1,6 @@
 local M = {}
 
+---Returns line size in bytes.
 ---@param index number line index
 ---@param n_is_placeable boolean position can be placed at a "\n"
 ---@return number
