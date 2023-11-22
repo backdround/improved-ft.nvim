@@ -17,41 +17,27 @@ local function get_count()
   return 1
 end
 
----@param user_pattern string
----@param forward boolean
----@param pre boolean
----@return string
-local function get_pattern(user_pattern, forward, pre)
-  if not pre then
-    return user_pattern
-  end
-
-  if forward then
-    return string.format([[\v(\n^|.)\ze%s]], user_pattern)
-  end
-
-  return string.format([[%s\v(\n^\n|\n^.|.)]], user_pattern)
-end
-
-local last_user_pattern = ""
+local last_user_char = ""
 local last_pre = false
 
 ---@param forward boolean
 ---@param pre boolean
 ---@param user_repeat boolean
+---@return function
 local function get_jump_function(forward, pre, user_repeat)
   return function()
     if not user_repeat then
       last_pre = pre
       if not utils.is_vim_repeat() then
-        last_user_pattern = utils.get_user_inputed_pattern()
+        last_user_char = utils.get_user_inputed_char()
       end
     end
 
     local options = {
       forward = forward,
+      char = last_user_char,
+      pre = last_pre,
       count = get_count(),
-      pattern = get_pattern(last_user_pattern, forward, last_pre)
     }
 
     jump.perform(options)

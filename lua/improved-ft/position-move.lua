@@ -1,7 +1,7 @@
 local M = {}
 
 ---@param index number line index
----@param n_is_placeable boolean cursor can be placed at a "\n"
+---@param n_is_placeable boolean position can be placed at a "\n"
 ---@return number
 local function line_length(index, n_is_placeable)
   local line = vim.api.nvim_buf_get_lines(0, index - 1, index, true)[1]
@@ -15,7 +15,7 @@ end
 
 ---Transforms any position to position into the current buffer's boundaries.
 ---@param position IFT_Position
----@param n_is_placeable boolean cursor can be placed at a "\n"
+---@param n_is_placeable boolean position can be placed at a "\n"
 ---@return IFT_Position
 local function normalize(position, n_is_placeable)
   ------------------------------
@@ -48,7 +48,7 @@ end
 
 ---Moves the given position backward once in the current buffer.
 ---@param position IFT_Position
----@param n_is_placeable boolean cursor can be placed at a "\n"
+---@param n_is_placeable boolean position can be placed at a "\n"
 ---@return IFT_Position
 M.backward_once = function(position, n_is_placeable)
   position = normalize(position, n_is_placeable)
@@ -67,7 +67,7 @@ end
 
 ---Moves the given position forward once in the current buffer.
 ---@param position IFT_Position
----@param n_is_placeable boolean cursor can be placed at a "\n"
+---@param n_is_placeable boolean position can be placed at a "\n"
 ---@return IFT_Position
 M.forward_once = function(position, n_is_placeable)
   position = normalize(position, n_is_placeable)

@@ -42,11 +42,10 @@ end
 
 ---Returns user's pattern to search
 ---@return string
-M.get_user_inputed_pattern = function()
+M.get_user_inputed_char = function()
   local char = vim.fn.getchar()
   char = vim.fn.nr2char(char)
-  local pattern = "\\M" .. vim.fn.escape(char, "^$\\")
-  return pattern
+  return char
 end
 
 return M

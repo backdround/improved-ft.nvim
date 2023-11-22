@@ -1,36 +1,69 @@
-local position_move = require("improved-ft.position-move")
+local move = require("improved-ft.position-move")
 local utils = require("improved-ft.utils")
 local M = {}
 
----Searches target jump position
 ---@param opts IFT_JumpOptions
+---@param n_is_placeable boolean position can be placed at a "\n"
 ---@return IFT_Position|nil
-local function search_target_position(opts)
+local function search_target_character_position(opts, n_is_placeable)
   local flags = "nW"
   if not opts.forward then
-    flags = flags .. "be"
+    flags = flags .. "b"
   end
 
+  local ignore_position = nil
+  if opts.pre then
+    local current_position = vim.api.nvim_win_get_cursor(0)
+    if opts.forward then
+      ignore_position = move.forward_once(current_position, n_is_placeable)
+    else
+      ignore_position = move.backward_once(current_position, n_is_placeable)
+    end
+  end
+
+  local last_founded_position = nil
   local count = opts.count
   local skipper = function()
+    local current_position = vim.api.nvim_win_get_cursor(0)
+    if vim.deep_equal(current_position, ignore_position) then
+      return 1
+    end
+    last_founded_position = current_position
     count = count - 1
     return count
   end
 
-  local position = vim.fn.searchpos(opts.pattern, flags, nil, nil, skipper)
-  position[2] = position[2] - 1
+  local pattern = "\\M" .. vim.fn.escape(opts.char, "^$\\")
+  vim.fn.searchpos(pattern, flags, nil, nil, skipper)
 
-  if position[1] == 0 then
+  return last_founded_position
+end
+
+---@param opts IFT_JumpOptions
+---@param n_is_placeable boolean position can be placed at a "\n"
+---@return IFT_Position|nil
+local function search_target_position(opts, n_is_placeable)
+  local target_position = search_target_character_position(opts, n_is_placeable)
+  if not target_position then
     return nil
   end
 
-  return position
+  if opts.pre then
+    if opts.forward then
+      target_position = move.backward_once(target_position, n_is_placeable)
+    else
+      target_position = move.forward_once(target_position, n_is_placeable)
+    end
+  end
+
+  return target_position
 end
 
 ---Performs jump to a character
 ---@param opts IFT_JumpOptions
 M.perform = function(opts)
-  local target_position = search_target_position(opts)
+  local n_is_placeable = utils.mode() ~= "normal"
+  local target_position = search_target_position(opts, n_is_placeable)
 
   if not target_position then
     return
@@ -44,7 +77,7 @@ M.perform = function(opts)
   local start_position = vim.api.nvim_win_get_cursor(0)
 
   if not opts.forward then
-    start_position = position_move.backward_once(start_position, true)
+    start_position = move.backward_once(start_position, n_is_placeable)
   end
 
   utils.select_region(start_position, target_position)
