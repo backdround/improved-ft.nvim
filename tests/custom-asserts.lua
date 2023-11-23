@@ -2,20 +2,8 @@ local assert = require("luassert")
 local say = require("say")
 local h = require("tests.helpers")
 
-local function cursor_at(_, arguments)
-  local line = arguments[1]
-  local column = arguments[2]
-
-  local current_line = vim.fn.line(".")
-  local current_column = vim.fn.virtcol(".") - 1
-
-  -- Prepare arguments for assert output
-  table.insert(arguments, 1, current_line)
-  table.insert(arguments, 2, current_column)
-  arguments.nofmt = { 1, 2, 3, 4 }
-
-  return line == current_line and column == current_column
-end
+------------------------------------------------------------
+-- Utility functions
 
 local function concatenate_lines(lines)
   local text = ""
@@ -25,6 +13,31 @@ local function concatenate_lines(lines)
   text = text:gsub("\n", "", 1)
 
   return text
+end
+
+local function from_bytes_to_position(position)
+  return {
+    position[1],
+    vim.fn.virtcol(position)
+  }
+end
+
+------------------------------------------------------------
+-- Assert functions
+
+local function cursor_at(_, arguments)
+  local line = arguments[1]
+  local column = arguments[2]
+
+  local byte_position = vim.api.nvim_win_get_cursor(0)
+  local position = from_bytes_to_position(byte_position)
+
+  -- Prepare arguments for assert output
+  table.insert(arguments, 1, position[1])
+  table.insert(arguments, 2, position[2])
+  arguments.nofmt = { 1, 2, 3, 4 }
+
+  return line == position[1] and column == position[2]
 end
 
 local function buffer(_, arguments)
@@ -47,8 +60,13 @@ local function last_selected_region(_, arguments)
   local expected_left_mark = arguments[1]
   local expected_right_mark = arguments[2]
 
-  local real_left_mark = vim.api.nvim_buf_get_mark(0, "<")
-  local real_right_mark = vim.api.nvim_buf_get_mark(0, ">")
+  local get_mark_position = function(name)
+    local byte_position = vim.api.nvim_buf_get_mark(0, name)
+    return from_bytes_to_position(byte_position)
+  end
+
+  local real_left_mark = get_mark_position("<")
+  local real_right_mark = get_mark_position(">")
 
   table.insert(arguments, 1, vim.inspect(real_left_mark))
   table.insert(arguments, 2, vim.inspect(real_right_mark))

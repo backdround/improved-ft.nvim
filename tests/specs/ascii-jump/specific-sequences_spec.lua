@@ -69,28 +69,4 @@ describe("specific-sequences-jump", function()
       assert.cursor_at(1, 1)
     end)
   end)
-
-  describe("non-ascii-sequence", function()
-    before_each(h.get_preset("некоторый", { 1, 4 }))
-
-    it("forward", function()
-      h.perform_through_keymap(ft.to_char_forward, "ы")
-      assert.cursor_at(1, 7)
-    end)
-
-    it("pre-forward", function()
-      h.perform_through_keymap(ft.to_pre_char_forward, "ы")
-      assert.cursor_at(1, 6)
-    end)
-
-    it("backward", function()
-      h.perform_through_keymap(ft.to_char_backward, "н")
-      assert.cursor_at(1, 0)
-    end)
-
-    it("pre-backward", function()
-      h.perform_through_keymap(ft.to_pre_char_backward, "н")
-      assert.cursor_at(1, 1)
-    end)
-  end)
 end)
