@@ -1,5 +1,7 @@
 local M = {}
 
+---Formats text and split to lines.
+---@param text string
 ---@return string[]
 M.get_user_lines = function(text)
   text = text or ""
@@ -32,29 +34,41 @@ M.get_user_lines = function(text)
   return lines
 end
 
-M.set_current_buffer = function(text)
-  local lines = M.get_user_lines(text)
+---Returns a function that resets neovim state
+---@param buffer_text string to set current buffer
+---@param cursor_position number[]
+---@return function
+M.get_preset = function(buffer_text, cursor_position)
+  return function()
+    -- Reset mode
+    local escape = vim.api.nvim_replace_termcodes("<esc>", true, false, true)
+    vim.api.nvim_feedkeys(escape, "nx", false)
 
-  -- Set current buffer
-  local last_line_index = vim.api.nvim_buf_line_count(0)
-  vim.api.nvim_buf_set_lines(0, 0, last_line_index, true, lines)
+    -- Reset last selected region
+    vim.api.nvim_buf_set_mark(0, "<", 0, 0, {})
+    vim.api.nvim_buf_set_mark(0, ">", 0, 0, {})
+
+    -- Set the current buffer
+    local lines = M.get_user_lines(buffer_text)
+    local last_line_index = vim.api.nvim_buf_line_count(0)
+    vim.api.nvim_buf_set_lines(0, 0, last_line_index, true, lines)
+
+    -- Set the cursor
+    M.set_cursor(unpack(cursor_position))
+  end
 end
 
-M.reset_mode = function()
-  local escape = vim.api.nvim_replace_termcodes("<esc>", true, false, true)
-  vim.api.nvim_feedkeys(escape, "nx", false)
-end
-
-M.reset_last_selected_region = function()
-  vim.api.nvim_buf_set_mark(0, "<", 0, 0, {})
-  vim.api.nvim_buf_set_mark(0, ">", 0, 0, {})
-end
-
+---Sets the cursor
+---@param line number 1-bazed
+---@param column number 1-bazed virtual column
 M.set_cursor = function(line, column)
   column = vim.fn.virtcol2col(0, line, column + 1) - 1
   vim.api.nvim_win_set_cursor(0, { line, column })
 end
 
+---Performs the given function as a user would do
+---@param func function
+---@param additional_keys string key to press after the function
 M.perform_through_keymap = function(func, additional_keys)
   local map_label = "<Plug>(perform_through_keymap)"
   vim.keymap.set({ "n", "o", "x" }, map_label, func)

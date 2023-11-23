@@ -3,19 +3,9 @@ local h = require("tests.helpers")
 
 require("tests.custom-asserts").register()
 
-local function get_preset(buffer_text, cursor_position)
-  return function()
-    h.reset_mode()
-    h.reset_last_selected_region()
-
-    h.set_current_buffer(buffer_text)
-    h.set_cursor(unpack(cursor_position))
-  end
-end
-
 describe("specific-sequences-jump", function()
   describe("repeating-char", function()
-    before_each(get_preset("aaaaa", { 1, 2 }))
+    before_each(h.get_preset("aaaaa", { 1, 2 }))
 
     it("forward", function()
       h.perform_through_keymap(ft.to_char_forward, "a")
@@ -49,7 +39,7 @@ describe("specific-sequences-jump", function()
   end)
 
   describe("alternating-repeating-char", function()
-    before_each(get_preset("a a a a a", { 1, 4 }))
+    before_each(h.get_preset("a a a a a", { 1, 4 }))
 
     it("forward", function()
       h.perform_through_keymap(ft.to_char_forward, "a")
@@ -81,7 +71,7 @@ describe("specific-sequences-jump", function()
   end)
 
   describe("non-ascii-sequence", function()
-    before_each(get_preset("некоторый", { 1, 4 }))
+    before_each(h.get_preset("некоторый", { 1, 4 }))
 
     it("forward", function()
       h.perform_through_keymap(ft.to_char_forward, "ы")

@@ -3,18 +3,8 @@ local h = require("tests.helpers")
 
 require("tests.custom-asserts").register()
 
-local function get_preset(buffer_text, cursor_position)
-  return function()
-    h.reset_mode()
-    h.reset_last_selected_region()
-
-    h.set_current_buffer(buffer_text)
-    h.set_cursor(unpack(cursor_position))
-  end
-end
-
 describe("line-corner-jump", function()
-  before_each(get_preset([[
+  before_each(h.get_preset([[
     a = some words here
     b = | words
     c = other words
