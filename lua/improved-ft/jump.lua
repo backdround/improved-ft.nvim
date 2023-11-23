@@ -76,6 +76,7 @@ M.perform = function(opts)
   end
 
   local start_position = vim.api.nvim_win_get_cursor(0)
+  start_position = utils.convert_from_bytes_to_position(start_position)
 
   if not opts.forward then
     start_position = move.backward_once(start_position, n_is_placeable)

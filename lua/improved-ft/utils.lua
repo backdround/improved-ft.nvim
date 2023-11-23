@@ -1,35 +1,48 @@
 local M = {}
 
----@param line number
----@param virt_column number
----@return number
-local function virt_column_to_byte_index(line, virt_column)
-  local new_column = vim.fn.virtcol2col(0, line, virt_column + 1) - 1
+---@Converts a position with virtual coordinates to a byte position.
+---@param position IFT_Position
+---@return number[]
+local function convert_from_position_to_bytes(position)
+  local line = position[1]
+  local column = vim.fn.virtcol2col(0, line, position[2] + 1) - 1
 
-  -- convert manually if virt_column points to a \n
-  if new_column ~= 0 then
-    if new_column == (vim.fn.virtcol2col(0, line, virt_column) - 1) then
-      local current_line = vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]
-      return current_line:len() + 1
+  -- Convert column manually if position points to a \n
+  if column ~= 0 then
+    if column == (vim.fn.virtcol2col(0, line, position[2]) - 1) then
+      local current_line =
+        vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]
+      column = current_line:len() + 1
     end
   end
 
-  return new_column
+  return { line, column }
+end
+
+---@Converts a byte position to a virtual coordinates position.
+---@param byte_position number[]
+---@return  IFT_Position
+M.convert_from_bytes_to_position = function(byte_position)
+  return {
+    byte_position[1],
+    vim.fn.virtcol(byte_position)
+  }
 end
 
 ---@param position1 IFT_Position
 ---@param position2 IFT_Position
 M.select_region = function(position1, position2)
-  vim.api.nvim_buf_set_mark(0, "<", position1[1], position1[2], {})
-  vim.api.nvim_buf_set_mark(0, ">", position2[1], position2[2], {})
+  local byte_position1 = convert_from_position_to_bytes(position1)
+  local byte_position2 = convert_from_position_to_bytes(position2)
+  vim.api.nvim_buf_set_mark(0, "<", byte_position1[1], byte_position1[2], {})
+  vim.api.nvim_buf_set_mark(0, ">", byte_position2[1], byte_position2[2], {})
   vim.cmd("normal! gv")
 end
 
 ---@param position IFT_Position
 M.set_cursor = function(position)
-  local line = position[1]
-  local column = virt_column_to_byte_index(position[1], position[2])
-  vim.api.nvim_win_set_cursor(0, { line, column })
+  local byte_position = convert_from_position_to_bytes(position)
+  vim.api.nvim_win_set_cursor(0, byte_position)
 end
 
 ---@return "operator-pending"|"visual"|"normal"
