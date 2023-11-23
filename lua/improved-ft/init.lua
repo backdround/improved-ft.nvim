@@ -2,6 +2,7 @@ local utils = require("improved-ft.utils")
 local jump = require("improved-ft.jump")
 
 local last_count = 1
+---Returns specified by a user count
 ---@return number
 local function get_count()
   if vim.v.count ~= 0 then
@@ -20,9 +21,9 @@ end
 local last_user_char = ""
 local last_pre = false
 
----@param forward boolean
----@param pre boolean
----@param user_repeat boolean
+---@param forward boolean direction to jump.
+---@param pre boolean jump one symbol before pattern
+---@param user_repeat boolean user manually triggered repetition
 ---@return function
 local function get_jump_function(forward, pre, user_repeat)
   return function()
@@ -33,6 +34,12 @@ local function get_jump_function(forward, pre, user_repeat)
       end
     end
 
+    ---Options that describe a jump behaviour.
+    ---@class IFT_JumpOptions
+    ---@field forward boolean direction to jump.
+    ---@field char string char to which to jump
+    ---@field pre boolean jump one symbol before pattern
+    ---@field count number count of jumps to perform
     local options = {
       forward = forward,
       char = last_user_char,
@@ -40,7 +47,7 @@ local function get_jump_function(forward, pre, user_repeat)
       count = get_count(),
     }
 
-    jump.perform(options)
+    jump(options)
   end
 end
 
