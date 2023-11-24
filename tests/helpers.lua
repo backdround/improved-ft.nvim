@@ -48,6 +48,9 @@ M.get_preset = function(buffer_text, cursor_position)
     vim.api.nvim_buf_set_mark(0, "<", 0, 0, {})
     vim.api.nvim_buf_set_mark(0, ">", 0, 0, {})
 
+    -- Wait for deferred cleanups
+    vim.wait(0)
+
     -- Set the current buffer
     local lines = M.get_user_lines(buffer_text)
     local last_line_index = vim.api.nvim_buf_line_count(0)
