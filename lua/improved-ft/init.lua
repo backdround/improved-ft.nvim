@@ -34,6 +34,10 @@ local function get_jump_function(forward, pre, user_repeat)
       end
     end
 
+    if last_user_char == "" then
+      return
+    end
+
     ---Options that describe a jump behaviour.
     ---@class IFT_JumpOptions
     ---@field forward boolean direction to jump.

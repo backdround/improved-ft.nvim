@@ -68,11 +68,14 @@ end
 
 ---Performs the given function as a user would do
 ---@param func function
----@param additional_keys string key to press after the function
+---@param additional_keys string|nil key to press after the function
 M.perform_through_keymap = function(func, additional_keys)
   local map_label = "<Plug>(perform_through_keymap)"
   vim.keymap.set({ "n", "o", "x" }, map_label, func)
-  local keys = map_label .. additional_keys
+  local keys = map_label
+  if additional_keys ~= nil then
+    keys = keys .. additional_keys
+  end
   keys = vim.api.nvim_replace_termcodes(keys, true, false, true)
   vim.api.nvim_feedkeys(keys, "x", false)
 end
