@@ -6,14 +6,14 @@ local position = require("improved-ft.position")
 ---@return IFT_Position|nil
 local function search_target_character_position(opts, n_is_pointable)
   local flags = "nW"
-  if not opts.forward then
+  if opts.direction == "backward" then
     flags = flags .. "b"
   end
 
   local ignore_position = nil
-  if opts.pre then
+  if opts.offset == "pre" then
     ignore_position = position.from_cursor_position(n_is_pointable)
-    if opts.forward then
+    if opts.direction == "forward" then
       ignore_position.forward_once()
     else
       ignore_position.backward_once()
@@ -32,8 +32,7 @@ local function search_target_character_position(opts, n_is_pointable)
     return count
   end
 
-  local pattern = "\\M" .. vim.fn.escape(opts.char, "^$\\")
-  vim.fn.searchpos(pattern, flags, nil, nil, skipper)
+  vim.fn.searchpos(opts.pattern, flags, nil, nil, skipper)
 
   return last_found_position
 end
@@ -47,8 +46,8 @@ local function search_target_position(opts, n_is_pointable)
     return nil
   end
 
-  if opts.pre then
-    if opts.forward then
+  if opts.offset == "pre" then
+    if opts.direction == "forward" then
       target_position.backward_once()
     else
       target_position.forward_once()
@@ -58,7 +57,14 @@ local function search_target_position(opts, n_is_pointable)
   return target_position
 end
 
----Performs a jump to a character
+---Options that describe the jump behaviour.
+---@class IFT_JumpOptions
+---@field direction "forward"|"backward" direction to search a given pattern
+---@field offset "pre"|"post"|"none" offset to cursor to place
+---@field pattern string pattern to search
+---@field count number count of jumps to perform
+
+---Performs a jump to a given pattern
 ---@param opts IFT_JumpOptions
 local perform = function(opts)
   local n_is_pointable = utils.mode() ~= "normal"
@@ -74,7 +80,7 @@ local perform = function(opts)
   end
 
   local start_position = position.from_cursor_position(n_is_pointable)
-  if not opts.forward then
+  if opts.direction == "backward" then
     start_position.backward_once()
   end
 

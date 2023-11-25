@@ -1,66 +1,78 @@
+local user_options = require("improved-ft.user-options")
 local utils = require("improved-ft.utils")
 local jump = require("improved-ft.jump")
 
-local last_count = 1
----Returns specified by a user count
----@return number
-local function get_count()
-  if vim.v.count ~= 0 then
-    last_count = vim.v.count
-    return vim.v.count
+local cache = {}
+
+---@param opts IFT_UserJumpOptions
+local perform_jump = function(opts)
+  user_options.assert(opts)
+
+  -- Get direction
+  if opts.direction == nil then
+    cache.direction = "forward"
+  else
+    cache.direction = opts.direction
   end
 
+  -- Get offset
+  if opts.offset == nil then
+    cache.offset = "none"
+  else
+    cache.offset = opts.offset
+  end
+
+  -- Get pattern
   if utils.is_vim_repeat() then
-    return last_count
+    cache.pattern = cache.pattern
+  elseif opts.pattern == nil then
+    cache.pattern = utils.get_user_inputed_pattern()
+  else
+    cache.pattern = opts.pattern
   end
 
-  last_count = 1
-  return 1
+  -- Get count
+  if vim.v.count ~= 0 then
+    cache.count = vim.v.count
+  elseif not utils.is_vim_repeat() then
+    cache.count = 1
+  else
+    cache.count = cache.count
+  end
+
+  jump(cache)
 end
 
-local last_user_char = ""
-local last_pre = false
-
----@param forward boolean direction to jump.
----@param pre boolean jump one symbol before pattern
----@param user_repeat boolean user manually triggered repetition
----@return function
-local function get_jump_function(forward, pre, user_repeat)
+local get_jump = function(direction, offset)
   return function()
-    if not user_repeat then
-      last_pre = pre
-      if not utils.is_vim_repeat() then
-        last_user_char = utils.get_user_inputed_char()
-      end
-    end
+    perform_jump({
+      direction = direction,
+      offset = offset,
+    })
+  end
+end
 
-    if last_user_char == "" then
+---@param forward boolean
+local get_repeat = function(direction)
+  return function()
+    if cache.pattern == nil then
       return
     end
 
-    ---Options that describe a jump behaviour.
-    ---@class IFT_JumpOptions
-    ---@field forward boolean direction to jump.
-    ---@field char string char to which to jump
-    ---@field pre boolean jump one symbol before pattern
-    ---@field count number count of jumps to perform
-    local options = {
-      forward = forward,
-      char = last_user_char,
-      pre = last_pre,
-      count = get_count(),
-    }
-
-    jump(options)
+    perform_jump({
+      direction = direction,
+      pattern = cache.pattern,
+      offset = cache.offset,
+    })
   end
 end
 
 return {
-  to_char_forward = get_jump_function(true, false, false),
-  to_pre_char_forward = get_jump_function(true, true, false),
-  to_char_backward = get_jump_function(false, false, false),
-  to_pre_char_backward = get_jump_function(false, true, false),
+  to_char_forward = get_jump("forward", "none"),
+  to_pre_char_forward = get_jump("forward", "pre"),
+  to_char_backward = get_jump("backward", "none"),
+  to_pre_char_backward = get_jump("backward", "pre"),
 
-  repeat_forward = get_jump_function(true, false, true),
-  repeat_backward = get_jump_function(false, false, true),
+  repeat_forward = get_repeat("forward"),
+  repeat_backward = get_repeat("backward"),
 }
