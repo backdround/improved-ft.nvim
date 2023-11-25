@@ -58,7 +58,7 @@ describe("dot `.` repeat", function()
   end)
 
   it("should work after user-repeat", function()
-    h.jump("forward", "none", "w")
+    h.jump("forward", "none", "w", { save_for_repetition = true })
 
     vim.api.nvim_feedkeys("d", "n", false)
     h.repeat_jump("forward")

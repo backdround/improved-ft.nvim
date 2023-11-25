@@ -1,59 +1,59 @@
-local user_options = require("improved-ft.user-options")
+local uo = require("improved-ft.user-options")
 local utils = require("improved-ft.utils")
 local jump = require("improved-ft.jump")
 
-local cache = {}
+local dot_repetition_cache = {}
+local user_repetition_cache = {}
 
 ---@param opts IFT_UserJumpOptions
 local perform_jump = function(opts)
-  user_options.assert(opts)
+  local user_options = vim.deepcopy(opts or {})
+  uo.assert(user_options)
+  uo.fill_default(user_options)
 
-  -- Get direction
-  if opts.direction == nil then
-    cache.direction = "forward"
-  else
-    cache.direction = opts.direction
-  end
-
-  -- Get offset
-  if opts.offset == nil then
-    cache.offset = "none"
-  else
-    cache.offset = opts.offset
-  end
+  local jump_options = {
+    direction = user_options.direction,
+    offset = user_options.offset,
+  }
 
   -- Get pattern
   if utils.is_vim_repeat() then
-    cache.pattern = cache.pattern
-  elseif opts.pattern == nil then
-    cache.pattern = utils.get_user_inputed_pattern()
+    jump_options.pattern = dot_repetition_cache.pattern
+  elseif user_options.pattern ~= nil then
+    jump_options.pattern = user_options.pattern
   else
-    cache.pattern = opts.pattern
+    jump_options.pattern = utils.get_user_inputed_pattern()
   end
 
   -- Get count
   if vim.v.count ~= 0 then
-    cache.count = vim.v.count
-  elseif not utils.is_vim_repeat() then
-    cache.count = 1
+    jump_options.count = vim.v.count
+  elseif utils.is_vim_repeat() then
+    jump_options.count = dot_repetition_cache.count
   else
-    cache.count = cache.count
+    jump_options.count = 1
   end
 
-  jump(cache)
+  -- Save caches
+  dot_repetition_cache = jump_options
+  if user_options.save_for_repetition then
+    user_repetition_cache = jump_options
+  end
+
+  jump(jump_options)
 end
 
----@param forward boolean
+---@param direction "forward"|"backward"
 local get_repeat = function(direction)
   return function()
-    if cache.pattern == nil then
+    if user_repetition_cache.pattern == nil then
       return
     end
 
     perform_jump({
       direction = direction,
-      pattern = cache.pattern,
-      offset = cache.offset,
+      pattern = user_repetition_cache.pattern,
+      offset = user_repetition_cache.offset,
     })
   end
 end

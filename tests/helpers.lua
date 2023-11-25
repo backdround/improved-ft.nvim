@@ -89,33 +89,42 @@ end
 ---Performs the ft.jump through a keymap
 ---@param direction "forward"|"backward"
 ---@param offset "pre"|"post"|"none"
----@param pattern string
-M.jump = function(direction, offset, pattern)
-  local map_label = "<Plug>(jump_through_keymap)"
-  vim.keymap.set({ "n", "o", "x" }, map_label, function()
-    ft.jump({
-      direction = direction,
-      pattern = pattern,
-      offset = offset,
-    })
-  end)
-  local keys = vim.api.nvim_replace_termcodes(map_label, true, false, true)
-  vim.api.nvim_feedkeys(keys, "x", false)
+---@param pattern string|nil
+---@param additional_options table|nil
+M.jump = function(direction, offset, pattern, additional_options)
+  local jump_options = vim.deepcopy(additional_options or {})
+  jump_options.direction = direction
+  jump_options.offset = offset
+  jump_options.pattern = pattern
+
+  M.perform_through_keymap(ft.jump, jump_options)
+  vim.api.nvim_feedkeys("", "x", false)
 end
 
 ---Performs the ft.repeat_forward/backward through a keymap
 ---@param direction "forward"|"backward"
 M.repeat_jump = function(direction)
-  local map_label = "<Plug>(repeat_jump_through_keymap)"
-  vim.keymap.set({ "n", "o", "x" }, map_label, function()
+  M.perform_through_keymap(function()
     if direction == "forward" then
       ft.repeat_forward()
     else
       ft.repeat_backward()
     end
   end)
+  vim.api.nvim_feedkeys("", "x", false)
+end
+
+---Performs a given function with given arguments through a keymap
+---@param fn function to perofrm
+---@param ... any arguments for fn
+M.perform_through_keymap = function(fn, ...)
+  local args = {...}
+  local map_label = "<Plug>(perform_through_keymap)"
+  vim.keymap.set({ "n", "o", "x" }, map_label, function()
+    fn(unpack(args))
+  end)
   local keys = vim.api.nvim_replace_termcodes(map_label, true, false, true)
-  vim.api.nvim_feedkeys(keys, "x", false)
+  vim.api.nvim_feedkeys(keys, "", false)
 end
 
 return M
