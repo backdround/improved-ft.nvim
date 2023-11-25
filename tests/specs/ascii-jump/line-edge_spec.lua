@@ -2,7 +2,7 @@ local h = require("tests.helpers")
 
 require("tests.custom-asserts").register()
 
-describe("line-corner-jump", function()
+describe("line-edge-jump", function()
   before_each(h.get_preset([[
     a = some words here
     b = | words
@@ -32,9 +32,7 @@ describe("line-corner-jump", function()
   end)
 
   describe("visual-mode", function()
-    before_each(function()
-      vim.api.nvim_feedkeys("v", "n", false)
-    end)
+    before_each(h.trigger_visual)
 
     it("forward", function()
       h.jump("forward", "none", "c")
@@ -62,9 +60,7 @@ describe("line-corner-jump", function()
   end)
 
   describe("operator-pending-mode", function()
-    before_each(function()
-      vim.api.nvim_feedkeys("d", "n", false)
-    end)
+    before_each(h.trigger_delete)
 
     it("forward", function()
       h.jump("forward", "none", "c")

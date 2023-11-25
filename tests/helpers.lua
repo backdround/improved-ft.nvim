@@ -61,6 +61,14 @@ M.get_preset = function(buffer_text, cursor_position)
   end
 end
 
+M.trigger_visual = function()
+  vim.api.nvim_feedkeys("v", "n", false)
+end
+
+M.trigger_delete = function()
+  vim.api.nvim_feedkeys("d", "n", false)
+end
+
 M.reset_mode = function()
   local escape = vim.api.nvim_replace_termcodes("<esc>", true, false, true)
   vim.api.nvim_feedkeys(escape, "nx", false)
