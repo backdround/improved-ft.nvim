@@ -1,3 +1,4 @@
+local ft = require("improved-ft")
 local M = {}
 
 ---Formats text and split to lines.
@@ -41,8 +42,7 @@ end
 M.get_preset = function(buffer_text, cursor_position)
   return function()
     -- Reset mode
-    local escape = vim.api.nvim_replace_termcodes("<esc>", true, false, true)
-    vim.api.nvim_feedkeys(escape, "nx", false)
+    M.reset_mode()
 
     -- Reset last selected region
     vim.api.nvim_buf_set_mark(0, "<", 0, 0, {})
@@ -61,25 +61,52 @@ M.get_preset = function(buffer_text, cursor_position)
   end
 end
 
----Sets the cursor
+M.reset_mode = function()
+  local escape = vim.api.nvim_replace_termcodes("<esc>", true, false, true)
+  vim.api.nvim_feedkeys(escape, "nx", false)
+end
+
 ---@param line number 1-bazed
----@param column number 1-bazed virtual column
+---@param column number 0-bazed virtual column
 M.set_cursor = function(line, column)
   column = vim.fn.virtcol2col(0, line, column + 1) - 1
   vim.api.nvim_win_set_cursor(0, { line, column })
 end
 
----Performs the given function as a user would do
----@param func function
----@param additional_keys string|nil key to press after the function
-M.perform_through_keymap = function(func, additional_keys)
-  local map_label = "<Plug>(perform_through_keymap)"
-  vim.keymap.set({ "n", "o", "x" }, map_label, func)
-  local keys = map_label
-  if additional_keys ~= nil then
-    keys = keys .. additional_keys
-  end
-  keys = vim.api.nvim_replace_termcodes(keys, true, false, true)
+M.reload_ft = function()
+  package.loaded["improved-ft"] = nil
+  ft = require("improved-ft")
+end
+
+---Performs the ft.jump through a keymap
+---@param direction "forward"|"backward"
+---@param offset "pre"|"post"|"none"
+---@param pattern string
+M.jump = function(direction, offset, pattern)
+  local map_label = "<Plug>(jump_through_keymap)"
+  vim.keymap.set({ "n", "o", "x" }, map_label, function()
+    ft.jump({
+      direction = direction,
+      pattern = pattern,
+      offset = offset,
+    })
+  end)
+  local keys = vim.api.nvim_replace_termcodes(map_label, true, false, true)
+  vim.api.nvim_feedkeys(keys, "x", false)
+end
+
+---Performs the ft.repeat_forward/backward through a keymap
+---@param direction "forward"|"backward"
+M.repeat_jump = function(direction)
+  local map_label = "<Plug>(repeat_jump_through_keymap)"
+  vim.keymap.set({ "n", "o", "x" }, map_label, function()
+    if direction == "forward" then
+      ft.repeat_forward()
+    else
+      ft.repeat_backward()
+    end
+  end)
+  local keys = vim.api.nvim_replace_termcodes(map_label, true, false, true)
   vim.api.nvim_feedkeys(keys, "x", false)
 end
 

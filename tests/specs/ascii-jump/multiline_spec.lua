@@ -1,4 +1,3 @@
-local ft = require("improved-ft")
 local h = require("tests.helpers")
 
 require("tests.custom-asserts").register()
@@ -12,22 +11,22 @@ describe("multiline-jump", function()
 
   describe("normal-mode", function()
     it("forward", function()
-      h.perform_through_keymap(ft.to_char_forward, "=")
+      h.jump("forward", "none", "=")
       assert.cursor_at(3, 2)
     end)
 
     it("pre-forward", function()
-      h.perform_through_keymap(ft.to_pre_char_forward, "=")
+      h.jump("forward", "pre", "=")
       assert.cursor_at(3, 1)
     end)
 
     it("backward", function()
-      h.perform_through_keymap(ft.to_char_backward, "=")
+      h.jump("backward", "none", "=")
       assert.cursor_at(1, 2)
     end)
 
     it("pre-backward", function()
-      h.perform_through_keymap(ft.to_pre_char_backward, "=")
+      h.jump("backward", "pre", "=")
       assert.cursor_at(1, 3)
     end)
   end)
@@ -38,22 +37,26 @@ describe("multiline-jump", function()
     end)
 
     it("forward", function()
-      h.perform_through_keymap(ft.to_char_forward, "=<esc>")
+      h.jump("forward", "none", "=")
+      h.reset_mode()
       assert.last_selected_region({ 2, 0 }, { 3, 2 })
     end)
 
     it("pre-forward", function()
-      h.perform_through_keymap(ft.to_pre_char_forward, "=<esc>")
+      h.jump("forward", "pre", "=")
+      h.reset_mode()
       assert.last_selected_region({ 2, 0 }, { 3, 1 })
     end)
 
     it("backward", function()
-      h.perform_through_keymap(ft.to_char_backward, "=<esc>")
+      h.jump("backward", "none", "=")
+      h.reset_mode()
       assert.last_selected_region({ 1, 2 }, { 2, 0 })
     end)
 
     it("pre-backward", function()
-      h.perform_through_keymap(ft.to_pre_char_backward, "=<esc>")
+      h.jump("backward", "pre", "=")
+      h.reset_mode()
       assert.last_selected_region({ 1, 3 }, { 2, 0 })
     end)
   end)
@@ -64,7 +67,7 @@ describe("multiline-jump", function()
     end)
 
     it("forward", function()
-      h.perform_through_keymap(ft.to_char_forward, "=")
+      h.jump("forward", "none", "=")
       assert.buffer([[
         a = some words here
          other words
@@ -72,7 +75,7 @@ describe("multiline-jump", function()
     end)
 
     it("pre-forward", function()
-      h.perform_through_keymap(ft.to_pre_char_forward, "=")
+      h.jump("forward", "pre", "=")
       assert.buffer([[
         a = some words here
         = other words
@@ -80,7 +83,7 @@ describe("multiline-jump", function()
     end)
 
     it("backward", function()
-      h.perform_through_keymap(ft.to_char_backward, "=")
+      h.jump("backward", "none", "=")
       assert.buffer([[
         a |
         b = other words
@@ -88,7 +91,7 @@ describe("multiline-jump", function()
     end)
 
     it("pre-backward", function()
-      h.perform_through_keymap(ft.to_pre_char_backward, "=")
+      h.jump("backward", "pre", "=")
       assert.buffer([[
         a =|
         b = other words

@@ -1,4 +1,3 @@
-local ft = require("improved-ft")
 local h = require("tests.helpers")
 
 require("tests.custom-asserts").register()
@@ -10,14 +9,14 @@ describe("v:count", function()
 
   it("should be respected during jump", function()
     vim.api.nvim_feedkeys("3", "n", false)
-    h.perform_through_keymap(ft.to_char_forward, "a")
+    h.jump("forward", "none", "a")
     assert.cursor_at(1, 6)
   end)
 
   it("should be respected during repeat", function()
-    h.perform_through_keymap(ft.to_char_forward, "a")
+    h.jump("forward", "none", "a")
     vim.api.nvim_feedkeys("3", "n", false)
-    h.perform_through_keymap(ft.repeat_forward)
+    h.repeat_jump("forward")
     assert.cursor_at(1, 8)
   end)
 
@@ -25,7 +24,7 @@ describe("v:count", function()
     "should be taken as a maximal possible count if v:count is too big",
     function()
       vim.api.nvim_feedkeys("22", "n", false)
-      h.perform_through_keymap(ft.to_char_forward, "a")
+      h.jump("forward", "none", "a")
       assert.cursor_at(1, 10)
     end
   )

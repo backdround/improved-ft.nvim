@@ -43,15 +43,6 @@ local perform_jump = function(opts)
   jump(cache)
 end
 
-local get_jump = function(direction, offset)
-  return function()
-    perform_jump({
-      direction = direction,
-      offset = offset,
-    })
-  end
-end
-
 ---@param forward boolean
 local get_repeat = function(direction)
   return function()
@@ -68,10 +59,7 @@ local get_repeat = function(direction)
 end
 
 return {
-  to_char_forward = get_jump("forward", "none"),
-  to_pre_char_forward = get_jump("forward", "pre"),
-  to_char_backward = get_jump("backward", "none"),
-  to_pre_char_backward = get_jump("backward", "pre"),
+  jump = perform_jump,
 
   repeat_forward = get_repeat("forward"),
   repeat_backward = get_repeat("backward"),

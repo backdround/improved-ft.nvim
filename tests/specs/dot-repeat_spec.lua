@@ -1,4 +1,3 @@
-local ft = require("improved-ft")
 local h = require("tests.helpers")
 
 require("tests.custom-asserts").register()
@@ -12,7 +11,7 @@ describe("dot `.` repeat", function()
 
   it("should work", function()
     vim.api.nvim_feedkeys("d", "n", false)
-    h.perform_through_keymap(ft.to_char_forward, "w")
+    h.jump("forward", "none", "w")
     assert.buffer([[
       a = ord a word and other words
       b = some words
@@ -29,7 +28,7 @@ describe("dot `.` repeat", function()
 
   it("should respect old v:count", function()
     vim.api.nvim_feedkeys("2d", "n", false)
-    h.perform_through_keymap(ft.to_char_forward, "w")
+    h.jump("forward", "none", "w")
     assert.buffer([[
       a = ord and other words
       b = some words
@@ -45,7 +44,7 @@ describe("dot `.` repeat", function()
 
   it("should choose new v:count over old v:count", function()
     vim.api.nvim_feedkeys("2d", "n", false)
-    h.perform_through_keymap(ft.to_char_forward, "w")
+    h.jump("forward", "none", "w")
     assert.buffer([[
     a = ord and other words
     b = some words
@@ -59,10 +58,10 @@ describe("dot `.` repeat", function()
   end)
 
   it("should work after user-repeat", function()
-    h.perform_through_keymap(ft.to_char_forward, "w")
+    h.jump("forward", "none", "w")
 
     vim.api.nvim_feedkeys("d", "n", false)
-    h.perform_through_keymap(ft.repeat_forward)
+    h.repeat_jump("forward")
     assert.buffer([[
       a = | ord and other words
       b = some words
@@ -78,10 +77,10 @@ describe("dot `.` repeat", function()
   end)
 
   it("should work after user-repeat with v:count", function()
-    h.perform_through_keymap(ft.to_char_forward, "w")
+    h.jump("forward", "none", "w")
 
     vim.api.nvim_feedkeys("2d", "n", false)
-    h.perform_through_keymap(ft.repeat_forward)
+    h.repeat_jump("forward")
     assert.buffer([[
       a = | ords
       b = some words

@@ -1,4 +1,3 @@
-local ft = require("improved-ft")
 local h = require("tests.helpers")
 
 require("tests.custom-asserts").register()
@@ -12,22 +11,22 @@ describe("non-ascii-multiline-jump", function()
 
   describe("normal-mode", function()
     it("forward", function()
-      h.perform_through_keymap(ft.to_char_forward, "ш")
+      h.jump("forward", "none", "ш")
       assert.cursor_at(3, 10)
     end)
 
     it("pre-forward", function()
-      h.perform_through_keymap(ft.to_pre_char_forward, "ш")
+      h.jump("forward", "pre", "ш")
       assert.cursor_at(3, 9)
     end)
 
     it("backward", function()
-      h.perform_through_keymap(ft.to_char_backward, "ш")
+      h.jump("backward", "none", "ш")
       assert.cursor_at(1, 10)
     end)
 
     it("pre-backward", function()
-      h.perform_through_keymap(ft.to_pre_char_backward, "ш")
+      h.jump("backward", "pre", "ш")
       assert.cursor_at(1, 11)
     end)
   end)
@@ -38,22 +37,26 @@ describe("non-ascii-multiline-jump", function()
     end)
 
     it("forward", function()
-      h.perform_through_keymap(ft.to_char_forward, "ш<esc>")
+      h.jump("forward", "none", "ш")
+      h.reset_mode()
       assert.last_selected_region({ 2, 0 }, { 3, 10 })
     end)
 
     it("pre-forward", function()
-      h.perform_through_keymap(ft.to_pre_char_forward, "ш<esc>")
+      h.jump("forward", "pre", "ш")
+      h.reset_mode()
       assert.last_selected_region({ 2, 0 }, { 3, 9 })
     end)
 
     it("backward", function()
-      h.perform_through_keymap(ft.to_char_backward, "ш<esc>")
+      h.jump("backward", "none", "ш")
+      h.reset_mode()
       assert.last_selected_region({ 1, 10 }, { 2, 0 })
     end)
 
     it("pre-backward", function()
-      h.perform_through_keymap(ft.to_pre_char_backward, "ш<esc>")
+      h.jump("backward", "pre", "ш")
+      h.reset_mode()
       assert.last_selected_region({ 1, 11 }, { 2, 0 })
     end)
   end)
@@ -64,7 +67,7 @@ describe("non-ascii-multiline-jump", function()
     end)
 
     it("forward", function()
-      h.perform_through_keymap(ft.to_char_forward, "ш")
+      h.jump("forward", "none", "ш")
       assert.buffer([[
         несколько штук тут
         тук там
@@ -72,7 +75,7 @@ describe("non-ascii-multiline-jump", function()
     end)
 
     it("pre-forward", function()
-      h.perform_through_keymap(ft.to_pre_char_forward, "ш")
+      h.jump("forward", "pre", "ш")
       assert.buffer([[
         несколько штук тут
         штук там
@@ -83,7 +86,7 @@ describe("non-ascii-multiline-jump", function()
     -- |
     -- другие штуки
     it("backward", function()
-      h.perform_through_keymap(ft.to_char_backward, "ш")
+      h.jump("backward", "none", "ш")
       assert.buffer([[
         несколько |
         несколько штук там
@@ -91,7 +94,7 @@ describe("non-ascii-multiline-jump", function()
     end)
 
     it("pre-backward", function()
-      h.perform_through_keymap(ft.to_pre_char_backward, "ш")
+      h.jump("backward", "pre", "ш")
       assert.buffer([[
         несколько ш|
         несколько штук там
