@@ -97,8 +97,7 @@ M.jump = function(direction, offset, pattern, additional_options)
   jump_options.offset = offset
   jump_options.pattern = pattern
 
-  M.perform_through_keymap(ft.jump, jump_options)
-  vim.api.nvim_feedkeys("", "x", false)
+  M.perform_through_keymap(ft.jump, true, jump_options)
 end
 
 ---Performs the ft.repeat_forward/backward through a keymap
@@ -110,21 +109,23 @@ M.repeat_jump = function(direction)
     else
       ft.repeat_backward()
     end
-  end)
-  vim.api.nvim_feedkeys("", "x", false)
+  end, true)
 end
 
 ---Performs a given function with given arguments through a keymap
 ---@param fn function to perofrm
+---@param wait_for_finish boolean
 ---@param ... any arguments for fn
-M.perform_through_keymap = function(fn, ...)
+M.perform_through_keymap = function(fn, wait_for_finish, ...)
   local args = {...}
   local map_label = "<Plug>(perform_through_keymap)"
   vim.keymap.set({ "n", "o", "x" }, map_label, function()
     fn(unpack(args))
   end)
   local keys = vim.api.nvim_replace_termcodes(map_label, true, false, true)
-  vim.api.nvim_feedkeys(keys, "", false)
+
+  local feedkeys_flags = wait_for_finish and "x" or ""
+  vim.api.nvim_feedkeys(keys, feedkeys_flags, false)
 end
 
 return M
