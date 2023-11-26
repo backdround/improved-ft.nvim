@@ -20,6 +20,11 @@ describe("multiline-jump", function()
       assert.cursor_at(3, 1)
     end)
 
+    it("post-forward", function()
+      h.jump("forward", "post", "=")
+      assert.cursor_at(3, 3)
+    end)
+
     it("backward", function()
       h.jump("backward", "none", "=")
       assert.cursor_at(1, 2)
@@ -28,6 +33,11 @@ describe("multiline-jump", function()
     it("pre-backward", function()
       h.jump("backward", "pre", "=")
       assert.cursor_at(1, 3)
+    end)
+
+    it("post-backward", function()
+      h.jump("backward", "post", "=")
+      assert.cursor_at(1, 1)
     end)
   end)
 
@@ -46,6 +56,12 @@ describe("multiline-jump", function()
       assert.last_selected_region({ 2, 0 }, { 3, 1 })
     end)
 
+    it("post-forward", function()
+      h.jump("forward", "post", "=")
+      h.reset_mode()
+      assert.last_selected_region({ 2, 0 }, { 3, 3 })
+    end)
+
     it("backward", function()
       h.jump("backward", "none", "=")
       h.reset_mode()
@@ -56,6 +72,12 @@ describe("multiline-jump", function()
       h.jump("backward", "pre", "=")
       h.reset_mode()
       assert.last_selected_region({ 1, 3 }, { 2, 0 })
+    end)
+
+    it("post-backward", function()
+      h.jump("backward", "post", "=")
+      h.reset_mode()
+      assert.last_selected_region({ 1, 1 }, { 2, 0 })
     end)
   end)
 
@@ -78,6 +100,14 @@ describe("multiline-jump", function()
       ]])
     end)
 
+    it("post-forward", function()
+      h.jump("forward", "post", "=")
+      assert.buffer([[
+        a = some words here
+        other words
+      ]])
+    end)
+
     it("backward", function()
       h.jump("backward", "none", "=")
       assert.buffer([[
@@ -90,6 +120,14 @@ describe("multiline-jump", function()
       h.jump("backward", "pre", "=")
       assert.buffer([[
         a =|
+        b = other words
+      ]])
+    end)
+
+    it("post-backward", function()
+      h.jump("backward", "post", "=")
+      assert.buffer([[
+        a|
         b = other words
       ]])
     end)

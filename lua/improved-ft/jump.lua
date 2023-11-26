@@ -54,6 +54,14 @@ local function search_target_position(opts, n_is_pointable)
     end
   end
 
+  if opts.offset == "post" then
+    if opts.direction == "forward" then
+      target_position.forward_once()
+    else
+      target_position.backward_once()
+    end
+  end
+
   return target_position
 end
 

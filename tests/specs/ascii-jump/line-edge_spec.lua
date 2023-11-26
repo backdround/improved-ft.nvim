@@ -20,6 +20,11 @@ describe("line-edge-jump", function()
       assert.cursor_at(2, 10)
     end)
 
+    it("post-forward", function()
+      h.jump("forward", "post", "s")
+      assert.cursor_at(3, 0)
+    end)
+
     it("backward", function()
       h.jump("backward", "none", "e")
       assert.cursor_at(1, 18)
@@ -28,6 +33,11 @@ describe("line-edge-jump", function()
     it("pre-backward", function()
       h.jump("backward", "pre", "e")
       assert.cursor_at(2, 0)
+    end)
+
+    it("post-backward", function()
+      h.jump("backward", "post", "b")
+      assert.cursor_at(1, 18)
     end)
   end)
 
@@ -46,6 +56,12 @@ describe("line-edge-jump", function()
       assert.last_selected_region({ 2, 4 }, { 2, 11 })
     end)
 
+    it("post-forward", function()
+      h.jump("forward", "post", "s")
+      h.reset_mode()
+      assert.last_selected_region({ 2, 4 }, { 2, 11 })
+    end)
+
     it("backward", function()
       h.jump("backward", "none", "e")
       h.reset_mode()
@@ -56,6 +72,12 @@ describe("line-edge-jump", function()
       h.jump("backward", "pre", "e")
       h.reset_mode()
       assert.last_selected_region({1, 19}, { 2, 4 })
+    end)
+
+    it("post-backward", function()
+      h.jump("backward", "post", "b")
+      h.reset_mode()
+      assert.last_selected_region({ 1, 19 }, { 2, 4 })
     end)
   end)
 
@@ -78,6 +100,14 @@ describe("line-edge-jump", function()
       ]])
     end)
 
+    it("post-forward", function()
+      h.jump("forward", "post", "s")
+      assert.buffer([[
+        a = some words here
+        b = c = other words
+      ]])
+    end)
+
     it("backward", function()
       h.jump("backward", "none", "e")
       assert.buffer([[
@@ -88,6 +118,14 @@ describe("line-edge-jump", function()
 
     it("pre-backward", function()
       h.jump("backward", "pre", "e")
+      assert.buffer([[
+        a = some words here| words
+        c = other words
+      ]])
+    end)
+
+    it("post-backward", function()
+      h.jump("backward", "post", "b")
       assert.buffer([[
         a = some words here| words
         c = other words
