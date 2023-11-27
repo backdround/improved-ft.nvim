@@ -85,7 +85,7 @@ local M = {}
 ---Creates IFT_Position from the position of the current cursor.
 ---@param n_is_pointable boolean position can point to a \n
 ---@return IFT_Position
-M.from_cursor_position = function(n_is_pointable)
+M.from_cursor = function(n_is_pointable)
   local byte_position = vim.api.nvim_win_get_cursor(0)
   local position = utils.from_byte_to_virtual(byte_position)
   return new_position(position[1], position[2], n_is_pointable)

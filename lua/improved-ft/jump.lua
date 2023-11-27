@@ -3,6 +3,34 @@
 local utils = require("improved-ft.utils")
 local position = require("improved-ft.position")
 
+---@return IFT_IgnoredPositions
+local function new_ignored_positions()
+  ---Represents positions that must be ignored during pattern search.
+  ---@class IFT_IgnoredPositions
+  local ip = {}
+
+  ---Tests if a given position must be ignored.
+  ---@param tested_position IFT_Position
+  ---@return boolean
+  ip.is_ignored = function(tested_position)
+    for _, ignored_position in ipairs(ip) do
+      if tested_position == ignored_position then
+        return true
+      end
+    end
+    return false
+  end
+
+  ---Adds an ignored position
+  ---@param ignored_position IFT_Position
+  ip.add = function(ignored_position)
+    ignored_position = vim.deepcopy(ignored_position)
+    table.insert(ip, ignored_position)
+  end
+
+  return ip
+end
+
 ---@class IFT_Pattern
 ---@field start_position IFT_Position
 ---@field end_position IFT_Position
@@ -11,26 +39,33 @@ local position = require("improved-ft.position")
 ---@param n_is_pointable boolean position can point to a "\n"
 ---@return IFT_Pattern|nil
 local function search_target_pattern(opts, n_is_pointable)
-  local flags = "nW"
+  local flags = "cnW"
   if opts.direction == "backward" then
     flags = flags .. "b"
   end
 
-  local ignore_position = nil
-  if opts.offset == "pre" then
-    ignore_position = position.from_cursor_position(n_is_pointable)
-    if opts.direction == "forward" then
-      ignore_position.forward_once()
-    else
-      ignore_position.backward_once()
+  local ignored_positions = new_ignored_positions()
+  do
+    local initial_position = position.from_cursor(n_is_pointable)
+
+    if opts.offset == "none" or opts.offset == "pre" then
+      ignored_positions.add(initial_position)
+    end
+
+    if opts.offset == "pre" and opts.direction == "forward" then
+      initial_position.forward_once()
+      ignored_positions.add(initial_position)
+    elseif opts.offset == "pre" and opts.direction == "backward" then
+      initial_position.backward_once()
+      ignored_positions.add(initial_position)
     end
   end
 
   local found_pattern = nil
   local count = opts.count
   local search_callback = function()
-    local current_position = position.from_cursor_position(n_is_pointable)
-    if current_position == ignore_position then
+    local current_position = position.from_cursor(n_is_pointable)
+    if ignored_positions.is_ignored(current_position) then
       return 1
     end
 
@@ -40,7 +75,7 @@ local function search_target_pattern(opts, n_is_pointable)
     }
     local find_end_position = function()
       found_pattern.end_position =
-        position.from_cursor_position(n_is_pointable)
+        position.from_cursor(n_is_pointable)
       return 0
     end
     vim.fn.searchpos(opts.pattern, "nWce", nil, nil, find_end_position)
@@ -116,7 +151,7 @@ local perform = function(opts)
     return
   end
 
-  local start_position = position.from_cursor_position(n_is_pointable)
+  local start_position = position.from_cursor(n_is_pointable)
   if opts.direction == "backward" then
     start_position.backward_once()
   end
