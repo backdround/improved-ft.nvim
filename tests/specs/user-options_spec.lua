@@ -77,8 +77,7 @@ describe("user-options", function()
     end)
 
     it("should be 'true' by default if a pattern taken interactively", function()
-      package.loaded["improved-ft"] = nil
-      ft = require("improved-ft")
+      ft._reset_state()
 
       h.perform_through_keymap(ft.jump, false, {})
       vim.api.nvim_feedkeys("a", "x", false)

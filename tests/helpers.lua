@@ -81,9 +81,8 @@ M.set_cursor = function(line, column)
   vim.api.nvim_win_set_cursor(0, { line, column })
 end
 
-M.reload_ft = function()
-  package.loaded["improved-ft"] = nil
-  ft = require("improved-ft")
+M.reset_ft = function()
+  ft._reset_state()
 end
 
 ---Performs the ft.jump through a keymap

@@ -90,7 +90,7 @@ describe("user-repeat", function()
 
   it("should do nothing if it's called before anything", function()
     assert.cursor_at(2, 4)
-    h.reload_ft()
+    h.reset_ft()
     h.repeat_jump("forward")
     assert.cursor_at(2, 4)
   end)
