@@ -1,10 +1,16 @@
+--# selene: allow(if_same_then_else)
+
 local utils = require("improved-ft.utils")
 local position = require("improved-ft.position")
 
+---@class IFT_Pattern
+---@field start_position IFT_Position
+---@field end_position IFT_Position
+
 ---@param opts IFT_JumpOptions
 ---@param n_is_pointable boolean position can point to a "\n"
----@return IFT_Position|nil
-local function search_target_character_position(opts, n_is_pointable)
+---@return IFT_Pattern|nil
+local function search_target_pattern(opts, n_is_pointable)
   local flags = "nW"
   if opts.direction == "backward" then
     flags = flags .. "b"
@@ -20,49 +26,72 @@ local function search_target_character_position(opts, n_is_pointable)
     end
   end
 
-  local last_found_position = nil
+  local found_pattern = nil
   local count = opts.count
-  local skipper = function()
+  local search_callback = function()
     local current_position = position.from_cursor_position(n_is_pointable)
     if current_position == ignore_position then
       return 1
     end
-    last_found_position = current_position
+
+    -- Construct found_pattern
+    found_pattern = {
+      start_position = current_position,
+    }
+    local find_end_position = function()
+      found_pattern.end_position =
+        position.from_cursor_position(n_is_pointable)
+      return 0
+    end
+    vim.fn.searchpos(opts.pattern, "nWce", nil, nil, find_end_position)
+
     count = count - 1
     return count
   end
 
-  vim.fn.searchpos(opts.pattern, flags, nil, nil, skipper)
+  vim.fn.searchpos(opts.pattern, flags, nil, nil, search_callback)
 
-  return last_found_position
+  return found_pattern
 end
 
 ---@param opts IFT_JumpOptions
 ---@param n_is_pointable boolean position can point to a "\n"
 ---@return IFT_Position|nil
 local function search_target_position(opts, n_is_pointable)
-  local target_position = search_target_character_position(opts, n_is_pointable)
-  if not target_position then
+  local target_pattern = search_target_pattern(opts, n_is_pointable)
+  if not target_pattern then
     return nil
   end
 
-  if opts.offset == "pre" then
-    if opts.direction == "forward" then
-      target_position.backward_once()
-    else
-      target_position.forward_once()
-    end
-  end
+  local pattern_start = target_pattern.start_position
+  local pattern_end = target_pattern.end_position
 
-  if opts.offset == "post" then
-    if opts.direction == "forward" then
-      target_position.forward_once()
-    else
-      target_position.backward_once()
-    end
-  end
+  local forward = opts.direction == "forward"
+  local backward = opts.direction == "backward"
+  local pre = opts.offset == "pre"
+  local post = opts.offset == "post"
+  local none = opts.offset == "none"
+  local normal_mode = utils.mode() == "normal"
 
-  return target_position
+  if forward and pre then
+    pattern_start.backward_once()
+    return pattern_start
+  elseif forward and none and normal_mode then
+    return pattern_start
+  elseif forward and none and not normal_mode then
+    return pattern_end
+  elseif forward and post then
+    pattern_end.forward_once()
+    return pattern_end
+  elseif backward and pre then
+    pattern_end.forward_once()
+    return pattern_end
+  elseif backward and none then
+    return pattern_start
+  elseif backward and post then
+    pattern_start.backward_once()
+    return pattern_start
+  end
 end
 
 ---Options that describe the jump behaviour.
