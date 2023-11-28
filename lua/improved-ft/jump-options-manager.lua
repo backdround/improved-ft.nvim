@@ -1,13 +1,28 @@
 local user_options_utils = require("improved-ft.user-options-utils")
 local utils = require("improved-ft.utils")
 
+---@param ignore_user_char_case boolean
 ---@return IFT_JumpOptionsManager
-local new = function()
+local new = function(ignore_user_char_case)
   ---@class IFT_JumpOptionsManager
   local manager = {
     _dot_repetition_cache = {},
     _user_repetition_cache = {},
+    _ignore_user_char_case = ignore_user_char_case,
   }
+
+  manager._get_user_inputed_pattern = function()
+    local char = utils.get_user_inputed_char()
+    local pattern = "\\M" .. vim.fn.escape(char, "^$\\")
+
+    local search_flags = "\\C"
+    if manager._ignore_user_char_case then
+      search_flags = "\\c"
+    end
+
+    pattern = search_flags .. pattern
+    return pattern
+  end
 
   ---@param user_options IFT_UserJumpOptions
   ---@return IFT_JumpOptions
@@ -28,7 +43,7 @@ local new = function()
     elseif user_options.pattern ~= nil then
       jump_options.pattern = user_options.pattern
     else
-      jump_options.pattern = utils.get_user_inputed_pattern()
+      jump_options.pattern = manager._get_user_inputed_pattern()
     end
 
     -- Get count

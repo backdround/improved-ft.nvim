@@ -1,9 +1,15 @@
 local jump = require("improved-ft.jump")
+local new_jump_options_manager = require("improved-ft.jump-options-manager").new
 
-local M = {}
+local M = {
+  _setup_options = {
+    ignore_user_char_case = false,
+  }
+}
 
 M._reset_state = function()
-  M._jump_options_manager = require("improved-ft.jump-options-manager").new()
+  M._jump_options_manager =
+    new_jump_options_manager(M._setup_options.ignore_user_char_case)
 end
 M._reset_state()
 
@@ -28,13 +34,15 @@ M.repeat_backward = function()
 end
 
 ---@class IFT_SetupOptions
----@field use_default_mappings boolean
+---@field use_default_mappings? boolean
+---@field ignore_user_char_case? boolean
 
----@param opts IFT_SetupOptions
+---@param opts? IFT_SetupOptions
 M.setup = function(opts)
   opts = opts or {}
+  M._setup_options = vim.tbl_extend("force", M._setup_options, opts)
 
-  if opts.use_default_mappings then
+  if M._setup_options.use_default_mappings then
     local map = function(key, fn, fn_options, description)
       vim.keymap.set({ "n", "x", "o" }, key, function()
         fn(fn_options)
@@ -58,6 +66,8 @@ M.setup = function(opts)
     map(";", M.repeat_forward, nil, "Jump forward to a last given char")
     map(",", M.repeat_backward, nil, "Jump backward to a last given char")
   end
+
+  M._reset_state()
 end
 
 return M

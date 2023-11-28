@@ -5,9 +5,9 @@ require("tests.custom-asserts").register()
 
 describe("setup-options", function()
   before_each(h.get_preset([[
-    a a a
+    A a a
     b
-    c c c
+    c c C
   ]], { 2, 0 }))
 
   describe("use_default_mappings == true", function()
@@ -53,5 +53,21 @@ describe("setup-options", function()
 
     local keymaps = vim.api.nvim_get_keymap("")
     assert.are.equals(0, #keymaps)
+  end)
+
+  describe("ignore_user_char_case", function()
+    it("if true then it should ignore user's char case", function()
+      ft.setup({ ignore_user_char_case = true })
+      h.perform_through_keymap(ft.jump, false)
+      vim.api.nvim_feedkeys("C", "x", false)
+      assert.cursor_at(3, 0)
+    end)
+
+    it("if false then it shouldn't ignore user's char case", function()
+      ft.setup({ ignore_user_char_case = false })
+      h.perform_through_keymap(ft.jump, false)
+      vim.api.nvim_feedkeys("C", "x", false)
+      assert.cursor_at(3, 4)
+    end)
   end)
 end)
