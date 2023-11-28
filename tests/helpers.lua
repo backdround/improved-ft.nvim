@@ -85,6 +85,14 @@ M.reset_ft = function()
   ft._reset_state()
 end
 
+M.remove_all_mappings = function()
+  local keymaps = vim.api.nvim_get_keymap("")
+
+  for _, keymap in ipairs(keymaps) do
+    vim.keymap.del(keymap.mode, keymap.lhs)
+  end
+end
+
 ---Performs the ft.jump through a keymap
 ---@param direction "forward"|"backward"
 ---@param offset "pre"|"post"|"none"
