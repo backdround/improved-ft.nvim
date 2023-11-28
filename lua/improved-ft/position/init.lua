@@ -43,7 +43,7 @@ local new_position = function(line, column, n_is_pointable)
 
     vim.cmd("normal! gv")
 
-    if vim.fn.visualmode() ~= "v" then
+    if vim.fn.visualmode() ~= "v" and vim.fn.visualmode() ~= "" then
       vim.cmd("normal! v")
     end
   end

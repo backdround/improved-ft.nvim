@@ -7,13 +7,13 @@ describe("specific-cases", function()
     a a | a a
   ]], { 1, 4 }))
 
-  describe("motion in operator-pending mode", function()
+  describe("should work in operator-pending mode after", function()
     before_each(h.get_preset([[
       a a | b b
       a a
     ]], { 1, 4 }))
 
-    it("should work after linewise visual selection", function()
+    it("linewise visual selection", function()
       h.feedkeys("V<esc>", true)
 
       h.trigger_delete()
@@ -22,7 +22,7 @@ describe("specific-cases", function()
       assert.buffer("a a  a")
     end)
 
-    it("should work after charwise visual selection", function()
+    it("charwise visual selection", function()
       h.feedkeys("v<esc>", true)
 
       h.trigger_delete()
@@ -31,9 +31,16 @@ describe("specific-cases", function()
       assert.buffer("a a  a")
     end)
 
-    it("should work after blockwise visual selection", function()
+    it("blockwise visual selection", function()
       h.feedkeys("<C-v><esc>", true)
 
+      h.trigger_delete()
+      h.jump("forward", "none", "a")
+
+      assert.buffer("a a  a")
+    end)
+
+    it("none visual selection", function()
       h.trigger_delete()
       h.jump("forward", "none", "a")
 

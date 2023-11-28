@@ -44,6 +44,12 @@ M.get_preset = function(buffer_text, cursor_position)
     -- Reset mode
     M.reset_mode()
 
+    -- Reset last visual selection mode
+    local last_visual_mode = nil
+    while last_visual_mode ~= "" do
+      last_visual_mode = vim.fn.visualmode(1)
+    end
+
     -- Reset last selected region
     vim.api.nvim_buf_set_mark(0, "<", 0, 0, {})
     vim.api.nvim_buf_set_mark(0, ">", 0, 0, {})
