@@ -40,7 +40,12 @@ local new_position = function(line, column, n_is_pointable)
     local byte_position2 = utils.from_virtual_to_byte(raw(position))
     vim.api.nvim_buf_set_mark(0, "<", byte_position1[1], byte_position1[2], {})
     vim.api.nvim_buf_set_mark(0, ">", byte_position2[1], byte_position2[2], {})
+
     vim.cmd("normal! gv")
+
+    if vim.fn.visualmode() ~= "v" then
+      vim.cmd("normal! v")
+    end
   end
 
   ---Moves the position backward once in the current buffer.

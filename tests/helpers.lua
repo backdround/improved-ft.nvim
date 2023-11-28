@@ -74,6 +74,18 @@ M.reset_mode = function()
   vim.api.nvim_feedkeys(escape, "nx", false)
 end
 
+---@param keys string
+---@param wait_for_finish boolean
+M.feedkeys = function(keys, wait_for_finish)
+  local flags = "n"
+  if wait_for_finish then
+    flags = flags .. "x"
+  end
+
+  keys = vim.api.nvim_replace_termcodes(keys, true, false, true)
+  vim.api.nvim_feedkeys(keys, flags, false)
+end
+
 ---@param line number 1-bazed
 ---@param column number 0-bazed virtual column
 M.set_cursor = function(line, column)
