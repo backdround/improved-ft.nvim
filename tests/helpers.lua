@@ -44,6 +44,9 @@ M.get_preset = function(buffer_text, cursor_position)
     -- Reset mode
     M.reset_mode()
 
+    -- Reset options
+    vim.go.selection = "inclusive"
+
     -- Reset last visual selection mode
     local last_visual_mode = nil
     while last_visual_mode ~= "" do

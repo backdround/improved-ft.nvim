@@ -146,6 +146,14 @@ local perform = function(opts)
     return
   end
 
+  if
+    utils.mode() == "visual"
+    and vim.go.selection == "exclusive"
+    and opts.direction == "forward"
+  then
+    target_position.forward_once()
+  end
+
   if utils.mode() ~= "operator-pending" then
     target_position.set_cursor()
     return
