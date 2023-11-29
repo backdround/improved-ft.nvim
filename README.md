@@ -15,6 +15,16 @@ Differences to other similar plugins:
 - Uses lua only.
 - Adds ability to jump to a user defined vim-pattern.
 
+### Preview
+#### Jump to a character (pre / none / post)
+<img src="https://github.com/backdround/improved-ft.nvim/assets/17349169/0931c570-e0ef-4eb1-940f-20c268262f1b" width="650px" />
+
+#### Jump inside / outside round brackets
+<img src="https://github.com/backdround/improved-ft.nvim/assets/17349169/c2994343-960d-4d4f-8ebc-e5fb8816212f" width="650px" />
+
+#### Jump to a number
+<img src="https://github.com/backdround/improved-ft.nvim/assets/17349169/83351908-4e68-4ace-9112-6511f29a9810" width="650px" />
+
 ### Configuration example
 ```lua
 local ft = require("improved-ft")
