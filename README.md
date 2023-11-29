@@ -110,6 +110,8 @@ vim.keymap.set({"n", "x", "o"}, "s", function()
     direction = "forward"
     offset = "post",
     pattern = "\\v[()]",
+    -- If you don't want to jump post ) that is the last character on the line.
+    -- use this pattern: "\\v((|\\)$@!)"
   })
 end)
 
@@ -125,24 +127,24 @@ end)
 
 </details>
 
-<details><summary>Jump to a dot</summary>
+<details><summary>Jump to a number</summary>
 
 ```lua
--- Jump forward to a dot.
+-- Jump forward to a number.
 vim.keymap.set({"n", "x", "o"}, "s", function()
   ft.jump({
     direction = "forward"
     offset = "none",
-    pattern = "\\M.",
+    pattern = "\\v\\d+",
   })
 end)
 
--- Jump backward to a dot.
+-- Jump backward to a number.
 vim.keymap.set({"n", "x", "o"}, "S", function()
   ft.jump({
     direction = "backward",
     offset = "none",
-    pattern = "\\M.",
+    pattern = "\\v\\d+",
   })
 end)
 ```
