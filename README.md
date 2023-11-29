@@ -15,6 +15,8 @@ Differences to other similar plugins:
 - Uses lua only.
 - Adds ability to jump to a user defined vim-pattern.
 
+<!-- panvimdoc-ignore-start -->
+
 ### Preview
 #### Jump to a character (pre / none / post)
 <img src="https://github.com/backdround/improved-ft.nvim/assets/17349169/0931c570-e0ef-4eb1-940f-20c268262f1b" width="650px" />
@@ -24,6 +26,10 @@ Differences to other similar plugins:
 
 #### Jump to a number
 <img src="https://github.com/backdround/improved-ft.nvim/assets/17349169/83351908-4e68-4ace-9112-6511f29a9810" width="650px" />
+
+---
+
+<!-- panvimdoc-ignore-end -->
 
 ### Configuration example
 ```lua
@@ -160,6 +166,12 @@ end)
 ```
 
 </details>
+
+<!-- panvimdoc-ignore-start -->
+
+---
+
+<!-- panvimdoc-ignore-end -->
 
 ### API Functions
 - `jump` - Perform a jump to a character or a predefined pattern.
