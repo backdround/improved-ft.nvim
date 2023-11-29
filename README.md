@@ -37,10 +37,10 @@ local ft = require("improved-ft")
 ft.setup({
   -- Maps default f/F/t/T/;/, keys
   -- default: false
-  use_default_mappings = true
+  use_default_mappings = true,
   -- Ignores case of interactively given characters.
   -- default: false
-  ignore_user_char_case = true
+  ignore_user_char_case = true,
 })
 ```
 
@@ -51,7 +51,7 @@ ft.setup({
 -- Jump forward pass a given by user character.
 vim.keymap.set({"n", "x", "o"}, "s", function()
   ft.jump({
-    direction = "forward"
+    direction = "forward",
     offset = "post",
     pattern = nil,
   })
@@ -75,7 +75,7 @@ end)
 -- Jump forward pass any quotes.
 vim.keymap.set({"n", "x", "o"}, "s", function()
   ft.jump({
-    direction = "forward"
+    direction = "forward",
     offset = "post",
     pattern = "\\v[\"'`]",
   })
@@ -99,7 +99,7 @@ end)
 -- Jump forward inside round brackets.
 vim.keymap.set({"n", "x", "o"}, "s", function()
   ft.jump({
-    direction = "forward"
+    direction = "forward",
     offset = "post",
     pattern = "\\M(",
   })
@@ -123,7 +123,7 @@ end)
 -- Jump forward inside / outside round brackets.
 vim.keymap.set({"n", "x", "o"}, "s", function()
   ft.jump({
-    direction = "forward"
+    direction = "forward",
     offset = "post",
     pattern = "\\v[()]",
     -- If you don't want to jump post ) that is the last character on the line.
@@ -149,7 +149,7 @@ end)
 -- Jump forward to a number.
 vim.keymap.set({"n", "x", "o"}, "s", function()
   ft.jump({
-    direction = "forward"
+    direction = "forward",
     offset = "none",
     pattern = "\\v\\d+",
   })
