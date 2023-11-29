@@ -45,10 +45,10 @@ ft.setup({
 ```
 
 ### Additional configuration examples
-<details><summary>Jump pass a character</summary>
+<details><summary>Jump past a character</summary>
 
 ```lua
--- Jump forward pass a given by user character.
+-- Jump forward past a given by user character.
 vim.keymap.set({"n", "x", "o"}, "s", function()
   ft.jump({
     direction = "forward",
@@ -57,7 +57,7 @@ vim.keymap.set({"n", "x", "o"}, "s", function()
   })
 end)
 
--- Jump backward pass a given by user character.
+-- Jump backward past a given by user character.
 vim.keymap.set({"n", "x", "o"}, "S", function()
   ft.jump({
     direction = "backward",
@@ -69,10 +69,10 @@ end)
 
 </details>
 
-<details><summary>Jump pass any quotes</summary>
+<details><summary>Jump past any quotes</summary>
 
 ```lua
--- Jump forward pass any quotes.
+-- Jump forward past any quotes.
 vim.keymap.set({"n", "x", "o"}, "s", function()
   ft.jump({
     direction = "forward",
@@ -81,7 +81,7 @@ vim.keymap.set({"n", "x", "o"}, "s", function()
   })
 end)
 
--- Jump backward pass any quotes.
+-- Jump backward past any quotes.
 vim.keymap.set({"n", "x", "o"}, "S", function()
   ft.jump({
     direction = "backward",
