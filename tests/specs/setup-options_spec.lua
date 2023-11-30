@@ -70,4 +70,61 @@ describe("setup-options", function()
       assert.cursor_at(3, 4)
     end)
   end)
+
+  describe("use_relative_repetition == true should respect a last jump direction.", function()
+    before_each(function()
+      h.get_preset([[
+        a a a a a a a
+      ]], { 1, 6 })()
+      ft.setup({ use_relative_repetition = true })
+    end)
+
+    after_each(function()
+      ft.setup({ use_relative_repetition = false })
+    end)
+
+    describe("repeat_forward", function()
+      it("should jump forward after forward jump", function()
+        h.perform_through_keymap(ft.jump, true, {
+          direction = "forward",
+          pattern = "a",
+          save_for_repetition = true,
+        })
+        h.perform_through_keymap(ft.repeat_forward, true)
+        assert.cursor_at(1, 10)
+      end)
+
+      it("should jump backward after backward jump", function()
+        h.perform_through_keymap(ft.jump, true, {
+          direction = "backward",
+          pattern = "a",
+          save_for_repetition = true,
+        })
+        h.perform_through_keymap(ft.repeat_forward, true)
+        assert.cursor_at(1, 2)
+      end)
+    end)
+
+    describe("repeat_backward", function()
+      it("should jump backward after forward jump", function()
+        h.perform_through_keymap(ft.jump, true, {
+          direction = "forward",
+          pattern = "a",
+          save_for_repetition = true,
+        })
+        h.perform_through_keymap(ft.repeat_backward, true)
+        assert.cursor_at(1, 6)
+      end)
+
+      it("should jump forward after backward jump", function()
+        h.perform_through_keymap(ft.jump, true, {
+          direction = "backward",
+          pattern = "a",
+          save_for_repetition = true,
+        })
+        h.perform_through_keymap(ft.repeat_backward, true)
+        assert.cursor_at(1, 6)
+      end)
+    end)
+  end)
 end)

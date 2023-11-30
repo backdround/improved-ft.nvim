@@ -2,13 +2,15 @@ local user_options_utils = require("improved-ft.user-options-utils")
 local utils = require("improved-ft.utils")
 
 ---@param ignore_user_char_case boolean
+---@param use_relative_repetition boolean
 ---@return IFT_JumpOptionsManager
-local new = function(ignore_user_char_case)
+local new = function(ignore_user_char_case, use_relative_repetition)
   ---@class IFT_JumpOptionsManager
   local manager = {
     _dot_repetition_cache = {},
     _user_repetition_cache = {},
     _ignore_user_char_case = ignore_user_char_case,
+    _use_relative_repetition = use_relative_repetition,
   }
 
   manager._get_user_inputed_pattern = function()
@@ -71,10 +73,21 @@ local new = function(ignore_user_char_case)
       return
     end
 
+    if manager._use_relative_repetition then
+      if manager._user_repetition_cache.direction == "backward" then
+        if direction == "forward" then
+          direction = "backward"
+        else
+          direction = "forward"
+        end
+      end
+    end
+
     return manager.get_from_user_options({
       direction = direction,
       pattern = manager._user_repetition_cache.pattern,
       offset = manager._user_repetition_cache.offset,
+      save_for_repetition = false,
     })
   end
 

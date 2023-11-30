@@ -4,12 +4,15 @@ local new_jump_options_manager = require("improved-ft.jump-options-manager").new
 local M = {
   _setup_options = {
     ignore_user_char_case = false,
+    use_relative_repetition = false,
   }
 }
 
 M._reset_state = function()
-  M._jump_options_manager =
-    new_jump_options_manager(M._setup_options.ignore_user_char_case)
+  M._jump_options_manager = new_jump_options_manager(
+    M._setup_options.ignore_user_char_case,
+    M._setup_options.use_relative_repetition
+  )
 end
 M._reset_state()
 
@@ -36,6 +39,7 @@ end
 ---@class IFT_SetupOptions
 ---@field use_default_mappings? boolean
 ---@field ignore_user_char_case? boolean
+---@field use_relative_repetition? boolean
 
 ---@param opts? IFT_SetupOptions
 M.setup = function(opts)
