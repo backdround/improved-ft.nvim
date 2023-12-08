@@ -1,0 +1,17 @@
+{
+  "$schema": "https://raw.githubusercontent.com/luals/vscode-lua/master/setting/schema.json",
+  "Lua": {
+    "diagnostics": {
+      "globals": [
+        "vim",
+        "assert",
+        "assert.cursor_at",
+        "assert.last_selected_region",
+        "assert.buffer"
+      ]
+    },
+    "runtime": {
+      "version": "LuaJIT",
+    },
+  }
+}

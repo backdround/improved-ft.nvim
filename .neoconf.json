@@ -1,0 +1,23 @@
+{
+  "neodev": {
+    "library": {
+      "plugins": [
+        "plenary.nvim"
+      ]
+    }
+  },
+  "lspconfig": {
+    "lua_ls": {
+      "Lua.runtime.version": "LuaJIT",
+      "Lua.workspace.checkThirdParty": false,
+      "Lua.diagnostics.globals": [
+        "vim",
+        "RH_ROOT",
+        "assert",
+        "assert.cursor_at",
+        "assert.last_selected_region",
+        "assert.buffer"
+      ]
+    }
+  }
+}
