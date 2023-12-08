@@ -32,12 +32,22 @@ M.is_vim_repeat = function()
   return M._is_repeat
 end
 
----Returns user's character to jump
+---Returns user's pattern to jump
+---@pattern ignore_case boolean
 ---@return string
-M.get_user_inputed_char = function()
+M.get_user_inputed_pattern = function(ignore_case)
   local char = vim.fn.getchar()
   char = vim.fn.nr2char(char)
-  return char
+
+  local pattern = "\\M" .. vim.fn.escape(char, "^$\\")
+
+  local search_flags = "\\C"
+  if ignore_case then
+    search_flags = "\\c"
+  end
+
+  pattern = search_flags .. pattern
+  return pattern
 end
 
 return M

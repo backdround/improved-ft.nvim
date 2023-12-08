@@ -85,22 +85,14 @@ describe("setup-options", function()
 
     describe("repeat_forward", function()
       it("should jump forward after forward jump", function()
-        h.perform_through_keymap(ft.jump, true, {
-          direction = "forward",
-          pattern = "a",
-          save_for_repetition = true,
-        })
-        h.perform_through_keymap(ft.repeat_forward, true)
+        h.jump("forward", "none", "a")
+        h.repeat_jump("forward")
         assert.cursor_at(1, 10)
       end)
 
       it("should jump backward after backward jump", function()
-        h.perform_through_keymap(ft.jump, true, {
-          direction = "backward",
-          pattern = "a",
-          save_for_repetition = true,
-        })
-        h.perform_through_keymap(ft.repeat_forward, true)
+        h.jump("backward", "none", "a")
+        h.repeat_jump("forward")
         assert.cursor_at(1, 2)
       end)
     end)

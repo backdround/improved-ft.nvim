@@ -1,39 +1,102 @@
-local jump = require("improved-ft.jump")
-local new_jump_options_manager = require("improved-ft.jump-options-manager").new
+local rabbit_hop = require("improved-ft.rabbit-hop.api")
+local utils = require("improved-ft.utils")
 
 local M = {
   _setup_options = {
     ignore_user_char_case = false,
     use_relative_repetition = false,
-  }
+  },
+  _last_hop_direction = "forward",
 }
 
 M._reset_state = function()
-  M._jump_options_manager = new_jump_options_manager(
-    M._setup_options.ignore_user_char_case,
-    M._setup_options.use_relative_repetition
-  )
+  rabbit_hop.reset_state()
 end
 M._reset_state()
 
----@param opts IFT_UserJumpOptions
 M.jump = function(opts)
-  local jump_options = M._jump_options_manager.get_from_user_options(opts)
-  jump(jump_options)
+  opts = vim.deepcopy(opts or {})
+
+  if opts.offset == "none" then
+    opts.offset = "start"
+  end
+
+  if utils.is_vim_repeat() then
+    local last_operator_hop_options =
+      rabbit_hop.get_last_operator_pending_hop_options()
+    if last_operator_hop_options == nil then
+      return
+    end
+    opts.pattern = last_operator_hop_options.pattern
+  else
+    opts.pattern =
+      utils.get_user_inputed_pattern(M._setup_options.ignore_user_char_case)
+  end
+
+  if vim.v.count ~= 0 then
+    opts.count = vim.v.count
+  else
+    opts.count = 1
+  end
+
+  M._last_hop_direction = opts.direction or "forward"
+  rabbit_hop.hop(opts)
 end
 
 M.repeat_forward = function()
-  local jump_options = M._jump_options_manager.get_repeating_options("forward")
-  if jump_options ~= nil then
-    jump(jump_options)
+  local last_hop_options = rabbit_hop.get_last_hop_options()
+  if last_hop_options == nil then
+    return
   end
+
+  local hop_options = {
+    pattern = last_hop_options.pattern,
+    offset = last_hop_options.offset,
+  }
+
+  if not M._setup_options.use_relative_repetition then
+    hop_options.direction = "forward"
+  else
+    hop_options.direction = M._last_hop_direction
+  end
+
+  if vim.v.count ~= 0 then
+    hop_options.count = vim.v.count
+  else
+    hop_options.count = 1
+  end
+
+  rabbit_hop.hop(hop_options)
 end
 
 M.repeat_backward = function()
-  local jump_options = M._jump_options_manager.get_repeating_options("backward")
-  if jump_options ~= nil then
-    jump(jump_options)
+  local last_hop_options = rabbit_hop.get_last_hop_options()
+  if last_hop_options == nil then
+    return
   end
+
+  local hop_options = {
+    pattern = last_hop_options.pattern,
+    offset = last_hop_options.offset,
+  }
+
+  if not M._setup_options.use_relative_repetition then
+    hop_options.direction = "backward"
+  else
+    if M._last_hop_direction == "forward" then
+      hop_options.direction = "backward"
+    else
+      hop_options.direction = "forward"
+    end
+  end
+
+  if vim.v.count ~= 0 then
+    hop_options.count = vim.v.count
+  else
+    hop_options.count = 1
+  end
+
+  rabbit_hop.hop(hop_options)
 end
 
 ---@class IFT_SetupOptions

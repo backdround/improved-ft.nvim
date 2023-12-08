@@ -102,10 +102,6 @@ M.set_cursor = function(line, column)
   vim.api.nvim_win_set_cursor(0, { line, column })
 end
 
-M.reset_ft = function()
-  ft._reset_state()
-end
-
 M.remove_all_mappings = function()
   local keymaps = vim.api.nvim_get_keymap("")
 
@@ -114,30 +110,30 @@ M.remove_all_mappings = function()
   end
 end
 
----Performs the ft.jump through a keymap
----@param direction "forward"|"backward"
----@param offset "pre"|"post"|"none"
----@param pattern string|nil
----@param additional_options table|nil
-M.jump = function(direction, offset, pattern, additional_options)
-  local jump_options = vim.deepcopy(additional_options or {})
-  jump_options.direction = direction
-  jump_options.offset = offset
-  jump_options.pattern = pattern
-
-  M.perform_through_keymap(ft.jump, true, jump_options)
+M.reset_ft = function()
+  ft._reset_state()
 end
 
----Performs the ft.repeat_forward/backward through a keymap
+---Performs a given jump through a keymap
+---@param direction? "forward"|"backward"
+---@param offset? "pre"|"none"|"post"
+---@param char string
+M.jump = function(direction, offset, char)
+  M.perform_through_keymap(ft.jump, false, {
+    direction = direction,
+    offset = offset,
+  })
+  M.feedkeys(char, true)
+end
+
+---Performs repeat jump through a keymap.
 ---@param direction "forward"|"backward"
 M.repeat_jump = function(direction)
-  M.perform_through_keymap(function()
-    if direction == "forward" then
-      ft.repeat_forward()
-    else
-      ft.repeat_backward()
-    end
-  end, true)
+  if direction == "forward" then
+    M.perform_through_keymap(ft.repeat_forward, true)
+  else
+    M.perform_through_keymap(ft.repeat_backward, true)
+  end
 end
 
 ---Performs a given function with given arguments through a keymap

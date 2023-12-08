@@ -54,9 +54,9 @@ describe("specific-cases", function()
       h.trigger_visual()
       h.perform_through_keymap(ft.jump, false, {
         direction = "backward",
-        pattern = "a",
+        offset = "none",
       })
-      h.feedkeys("d", true)
+      h.feedkeys("ad", true)
 
       assert.buffer([[
         a | b b
@@ -66,8 +66,11 @@ describe("specific-cases", function()
 
     it("during forward jump", function()
       h.trigger_visual()
-      h.perform_through_keymap(ft.jump, false, { pattern = "b" })
-      h.feedkeys("d", true)
+      h.perform_through_keymap(ft.jump, false, {
+        direction = "forward",
+        offset = "none",
+      })
+      h.feedkeys("bd", true)
 
       assert.buffer([[
         a a  b
@@ -79,10 +82,10 @@ describe("specific-cases", function()
       h.trigger_visual()
       h.feedkeys("2", false)
       h.perform_through_keymap(ft.jump, false, {
-        pattern = "b",
+        direction = "forward",
         offset = "post",
       })
-      h.feedkeys("d", true)
+      h.feedkeys("bd", true)
 
       assert.buffer([[
         a a a a

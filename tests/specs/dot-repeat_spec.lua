@@ -26,6 +26,25 @@ describe("dot `.` repeat", function()
     ]])
   end)
 
+  it("should preserve option from last operator-pending jump", function()
+    vim.api.nvim_feedkeys("d", "n", false)
+    h.jump("forward", "none", "w")
+    assert.buffer([[
+      a = ord a word and other words
+      b = some words
+      c = a word a word and other words
+    ]])
+
+    h.jump("forward", "none", "a")
+
+    vim.api.nvim_feedkeys(".", "nx", false)
+    assert.buffer([[
+      a = ord ord and other words
+      b = some words
+      c = a word a word and other words
+    ]])
+  end)
+
   it("should respect old v:count", function()
     vim.api.nvim_feedkeys("2d", "n", false)
     h.jump("forward", "none", "w")
@@ -58,7 +77,7 @@ describe("dot `.` repeat", function()
   end)
 
   it("should work after user-repeat", function()
-    h.jump("forward", "none", "w", { save_for_repetition = true })
+    h.jump("forward", "none", "w")
 
     vim.api.nvim_feedkeys("d", "n", false)
     h.repeat_jump("forward")
