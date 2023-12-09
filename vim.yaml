@@ -21,14 +21,13 @@ globals:
     args:
       - type: function
 
-  assert.equals:
+  assert.are.same:
     args:
       - type: any
       - type: any
-      - { type: any, required: false }
-  assert.same:
+
+  assert.is.Nil:
     args:
-      - type: any
       - type: any
 
   assert.is_not:

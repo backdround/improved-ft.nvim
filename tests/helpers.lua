@@ -1,4 +1,3 @@
-local rh = require("rabbit-hop")
 local M = {}
 
 ---Formats text and split to lines.
@@ -74,6 +73,10 @@ M.trigger_visual = function()
   vim.api.nvim_feedkeys("v", "n", false)
 end
 
+M.trigger_insert = function()
+  vim.api.nvim_feedkeys("i", "n", false)
+end
+
 M.trigger_delete = function()
   vim.api.nvim_feedkeys("d", "n", false)
 end
@@ -102,19 +105,6 @@ M.set_cursor = function(line, column)
   vim.api.nvim_win_set_cursor(0, { line, column })
 end
 
----Performs the rh.hop through a keymap
----@param direction "forward"|"backward"
----@param offset "pre"|"start"|"end"|"post"
----@param pattern string
-M.hop = function(direction, offset, pattern)
-  local hop_options = {}
-  hop_options.direction = direction
-  hop_options.offset = offset
-  hop_options.pattern = pattern
-
-  M.perform_through_keymap(rh.hop, true, hop_options)
-end
-
 ---Performs a given function with given arguments through a keymap
 ---@param fn function to perofrm
 ---@param wait_for_finish boolean
@@ -122,7 +112,7 @@ end
 M.perform_through_keymap = function(fn, wait_for_finish, ...)
   local args = {...}
   local map_label = "<Plug>(perform_through_keymap)"
-  vim.keymap.set({ "n", "o", "x" }, map_label, function()
+  vim.keymap.set({ "n", "o", "x", "i" }, map_label, function()
     fn(unpack(args))
   end)
   local keys = vim.api.nvim_replace_termcodes(map_label, true, false, true)

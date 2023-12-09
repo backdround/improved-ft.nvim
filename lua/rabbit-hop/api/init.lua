@@ -1,5 +1,5 @@
 local hop = require(... .. ".hop")
-local user_options_utils = require(... .. ".user-options-utils")
+local api_options_utils = require(... .. ".api-options-utils")
 
 local M = {}
 
@@ -14,9 +14,9 @@ M.reset_state = function()
 end
 M.reset_state()
 
----@param user_options RH_UserHopOptions
-M.hop = function(user_options)
-  local hop_options = user_options_utils.get_hop_options(user_options)
+---@param api_hop_options RH_ApiHopOptions
+M.hop = function(api_hop_options)
+  local hop_options = api_options_utils.get_hop_options(api_hop_options)
   M._last_hop_options = hop_options
   if is_operator_pending_mode() then
     M._last_operator_pending_hop_options = hop_options

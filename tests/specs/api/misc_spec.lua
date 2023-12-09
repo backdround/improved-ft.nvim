@@ -1,5 +1,6 @@
+local api_helpers = require("tests.api-helpers")
 local h = require("tests.helpers")
-local rh = require("rabbit-hop")
+local rabbit_hop_api = require("rabbit-hop.api")
 
 require("tests.custom-asserts").register()
 
@@ -14,7 +15,7 @@ describe("misc", function()
       h.feedkeys("V<esc>", true)
 
       h.trigger_delete()
-      h.hop("forward", "pre", "a")
+      api_helpers.hop("forward", "pre", "a")
 
       assert.buffer("ab ab ab ab")
     end)
@@ -23,7 +24,7 @@ describe("misc", function()
       h.feedkeys("v<esc>", true)
 
       h.trigger_delete()
-      h.hop("forward", "pre", "a")
+      api_helpers.hop("forward", "pre", "a")
 
       assert.buffer("ab ab ab ab")
     end)
@@ -32,14 +33,14 @@ describe("misc", function()
       h.feedkeys("<C-v><esc>", true)
 
       h.trigger_delete()
-      h.hop("forward", "pre", "a")
+      api_helpers.hop("forward", "pre", "a")
 
       assert.buffer("ab ab ab ab")
     end)
 
     it("none visual selection", function()
       h.trigger_delete()
-      h.hop("forward", "pre", "a")
+      api_helpers.hop("forward", "pre", "a")
 
       assert.buffer("ab ab ab ab")
     end)
@@ -52,7 +53,7 @@ describe("misc", function()
 
     it("during backward hop", function()
       h.trigger_visual()
-      h.perform_through_keymap(rh.hop, false, {
+      h.perform_through_keymap(rabbit_hop_api.hop, false, {
         direction = "backward",
         offset = "start",
         pattern = "ab",
@@ -67,7 +68,7 @@ describe("misc", function()
 
     it("during forward hop", function()
       h.trigger_visual()
-      h.perform_through_keymap(rh.hop, false, {
+      h.perform_through_keymap(rabbit_hop_api.hop, false, {
         direction = "forward",
         offset = "pre",
         pattern = "bc"
@@ -82,11 +83,11 @@ describe("misc", function()
 
     it("during forward hop to a new line", function()
       h.trigger_visual()
-      h.feedkeys("2", false)
-      h.perform_through_keymap(rh.hop, false, {
+      h.perform_through_keymap(rabbit_hop_api.hop, false, {
         direction = "forward",
         offset = "post",
         pattern = "bc",
+        count = 2,
       })
       h.feedkeys("d", true)
 

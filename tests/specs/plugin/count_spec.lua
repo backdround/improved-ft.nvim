@@ -1,3 +1,4 @@
+local rabbit_hop = require("rabbit-hop")
 local h = require("tests.helpers")
 
 require("tests.custom-asserts").register()
@@ -9,16 +10,24 @@ describe("v:count", function()
   local pattern = "\\M<a>"
 
   it("should be respected during hop", function()
-    vim.api.nvim_feedkeys("3", "n", false)
-    h.hop("forward", "start", pattern)
+    h.feedkeys("3", false)
+    h.perform_through_keymap(rabbit_hop.hop, true, {
+      direction = "forward",
+      offset = "start",
+      pattern = pattern,
+    })
     assert.cursor_at(1, 12)
   end)
 
   it(
     "should be taken as a maximal possible count if v:count is too big",
     function()
-      vim.api.nvim_feedkeys("22", "n", false)
-      h.hop("forward", "start", pattern)
+      h.feedkeys("22", false)
+      h.perform_through_keymap(rabbit_hop.hop, true, {
+        direction = "forward",
+        offset = "start",
+        pattern = pattern,
+      })
       assert.cursor_at(1, 16)
     end
   )

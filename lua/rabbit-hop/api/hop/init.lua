@@ -1,7 +1,7 @@
 local position = require(... .. ".position")
 local search_pattern = require(... .. ".search-pattern")
 
----@return "operator-pending"|"visual"|"normal"
+---@return "operator-pending"|"visual"|"normal"|"insert"
 local mode = function()
   local m = tostring(vim.fn.mode(true))
 
@@ -9,53 +9,64 @@ local mode = function()
     return "operator-pending"
   elseif m:find("[vV]") then
     return "visual"
+  elseif m:find("i") then
+    return "insert"
   else
     return "normal"
   end
 end
 
 ---@param pattern_position RH_PatternPosition
----@param direction "forward"|"backward"
----@param offset "pre"|"start"|"end"|"post"
+---@param opts RH_HopOptions
 ---@return RH_Position
-local function get_position_from_pattern(pattern_position, direction, offset)
-  local pattern_start = position.copy(pattern_position.start_position)
-  local pattern_end = position.copy(pattern_position.end_position)
+local function get_position_from_pattern(pattern_position, opts)
+  local choose_position_based_on_offset = function()
+    local pattern_start = position.copy(pattern_position.start_position)
+    local pattern_end = position.copy(pattern_position.end_position)
 
-  if direction == "forward" then
-    if offset == "pre" then
-      pattern_start.backward_once()
-      return pattern_start
-    elseif offset == "start" then
-      return pattern_start
-    elseif offset == "end" then
-      return pattern_end
-    elseif offset == "post" then
-      pattern_end.forward_once()
-      return pattern_end
+    if opts.direction == "forward" then
+      if opts.offset == "pre" then
+        pattern_start.backward_once()
+        return pattern_start
+      elseif opts.offset == "start" then
+        return pattern_start
+      elseif opts.offset == "end" then
+        return pattern_end
+      elseif opts.offset == "post" then
+        pattern_end.forward_once()
+        return pattern_end
+      end
     end
-  end
 
-  if direction == "backward" then
-    if offset == "pre" then
-      pattern_end.forward_once()
-      return pattern_end
-    elseif offset == "end" then
-      return pattern_end
-    elseif offset == "start" then
-      return pattern_start
-    elseif offset == "post" then
-      pattern_start.backward_once()
-      return pattern_start
+    if opts.direction == "backward" then
+      if opts.offset == "pre" then
+        pattern_end.forward_once()
+        return pattern_end
+      elseif opts.offset == "end" then
+        return pattern_end
+      elseif opts.offset == "start" then
+        return pattern_start
+      elseif opts.offset == "post" then
+        pattern_start.backward_once()
+        return pattern_start
+      end
     end
-  end
 
-  error(
-    ("Unknown direction or offset: %s %s"):format(
-      tostring(direction),
-      tostring(offset)
+    error(
+      ("Unknown direction or offset: %s %s"):format(
+        tostring(opts.direction),
+        tostring(opts.offset)
+      )
     )
-  )
+  end
+
+  local target_position = choose_position_based_on_offset()
+
+  if mode() == "insert" and opts.insert_mode_target_side == "right" then
+    target_position.forward_once()
+  end
+
+  return target_position
 end
 
 ---@param opts RH_HopOptions
@@ -69,8 +80,7 @@ local function search_target_position(opts, n_is_pointable)
   local is_pattern_position_suitable = function(potential_pattern_position)
     local potential_position = get_position_from_pattern(
       potential_pattern_position,
-      opts.direction,
-      opts.offset
+      opts
     )
 
     if opts.direction == "forward" then
@@ -91,7 +101,7 @@ local function search_target_position(opts, n_is_pointable)
     return nil
   end
 
-  return get_position_from_pattern(target_pattern, opts.direction, opts.offset)
+  return get_position_from_pattern(target_pattern, opts)
 end
 
 ---Options that describe the hop behaviour.
@@ -99,6 +109,7 @@ end
 ---@field direction "forward"|"backward" direction to search a given pattern
 ---@field offset "pre"|"start"|"end"|"post" offset of the cursor to the place
 ---@field pattern string pattern to search
+---@field insert_mode_target_side "left"|"right" side to place the cursor in insert mode
 ---@field count number count of hops to perform
 
 ---Performs a hop to a given pattern
