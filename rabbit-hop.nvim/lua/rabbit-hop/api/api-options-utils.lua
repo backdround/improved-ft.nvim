@@ -34,6 +34,19 @@ local assert_offset = function(offset)
   end
 end
 
+local assert_insert_mode_target_side = function(insert_mode_target_side)
+  if
+    insert_mode_target_side ~= nil
+    and insert_mode_target_side ~= "left"
+    and insert_mode_target_side ~= "right"
+  then
+    error(
+      'insert_mode_target_side must be "left"|"right"|nil, but it is: '
+        .. tostring(insert_mode_target_side)
+    )
+  end
+end
+
 local assert_count = function(count)
   if count ~= nil and type(count) ~= "number" then
     error("count must be a number, but it is: " .. tostring(type(count)))
@@ -41,14 +54,15 @@ local assert_count = function(count)
 end
 
 ---Options that an api user gives
----@class RH_UserHopOptions
+---@class RH_ApiHopOptions
 ---@field pattern string pattern to search
 ---@field direction? "forward"|"backward" direction to search a given pattern
 ---@field offset? "pre"|"start"|"end"|"post" offset to cursor to place
+---@field insert_mode_target_side? "left"|"right" side to place the cursor in insert mode
 ---@field count number? count of hops to perform
 
 ---Checks and fills empty fields with default values
----@param options RH_UserHopOptions
+---@param options RH_ApiHopOptions
 ---@return RH_HopOptions
 M.get_hop_options = function(options)
   if type(options) ~= "table" then
@@ -59,11 +73,13 @@ M.get_hop_options = function(options)
   assert_direction(options.direction)
   assert_offset(options.offset)
   assert_count(options.count)
+  assert_insert_mode_target_side(options.insert_mode_target_side)
 
   local default = {
     direction = "forward",
     offset = "start",
-    count = 1
+    count = 1,
+    insert_mode_target_side = "left",
   }
 
   local hop_options = vim.tbl_extend("force", default, options)

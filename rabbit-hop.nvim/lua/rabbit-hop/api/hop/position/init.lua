@@ -1,7 +1,8 @@
 local utils = require(... .. ".utils")
 
--- It won't work if getmetatable(p1) ~= getmetatable(p2).
--- That's why it isn't declared near the usage place.
+-- The variable must be file local in order to '__eq' work properly.
+-- lua 5.1 checks getmetatable(p1) == getmetatable(p2) before performing the
+-- real check.
 local position_metatable = {
   __eq = function(p1, p2)
     return p1.line == p2.line and p1.column == p2.column
