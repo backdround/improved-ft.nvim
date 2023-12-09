@@ -13,6 +13,8 @@
       "Lua.diagnostics.globals": [
         "vim",
         "assert",
+        "assert.is",
+        "assert.are",
         "assert.cursor_at",
         "assert.last_selected_region",
         "assert.buffer"

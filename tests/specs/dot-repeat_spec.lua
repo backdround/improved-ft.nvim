@@ -1,114 +1,67 @@
+local ft = require("improved-ft")
 local h = require("tests.helpers")
 
 require("tests.custom-asserts").register()
 
 describe("dot `.` repeat", function()
-  before_each(h.get_preset([[
-    a = | word a word and other words
-    b = some words
-    c = a word a word and other words
-  ]], { 1, 4 }))
+  before_each(h.get_preset("a | a w a w a w a w a w end", { 1, 2 }))
 
   it("should work", function()
-    vim.api.nvim_feedkeys("d", "n", false)
-    h.jump("forward", "none", "w")
-    assert.buffer([[
-      a = ord a word and other words
-      b = some words
-      c = a word a word and other words
-    ]])
+    h.feedkeys("d", false)
+    h.hop_with_character(ft.hop_forward_to_char, "w")
+    assert.buffer("a  a w a w a w a w end")
 
-    vim.api.nvim_feedkeys(".", "nx", false)
-    assert.buffer([[
-      a = ord and other words
-      b = some words
-      c = a word a word and other words
-    ]])
+    h.feedkeys(".", true)
+    assert.buffer("a  a w a w a w end")
   end)
 
-  it("should preserve option from last operator-pending jump", function()
-    vim.api.nvim_feedkeys("d", "n", false)
-    h.jump("forward", "none", "w")
-    assert.buffer([[
-      a = ord a word and other words
-      b = some words
-      c = a word a word and other words
-    ]])
+  it("should preserve option after another hop", function()
+    h.feedkeys("d", false)
+    h.hop_with_character(ft.hop_forward_to_char, "w")
+    assert.buffer("a  a w a w a w a w end")
 
-    h.jump("forward", "none", "a")
+    h.hop_with_character(ft.hop_forward_to_char, "a")
 
-    vim.api.nvim_feedkeys(".", "nx", false)
-    assert.buffer([[
-      a = ord ord and other words
-      b = some words
-      c = a word a word and other words
-    ]])
+    h.feedkeys(".", true)
+    assert.buffer("a   a w a w a w end")
+  end)
+
+  it("should preserve option after non operator-pending repeat", function()
+    h.feedkeys("d", false)
+    h.hop_with_character(ft.hop_forward_to_char, "w")
+    assert.buffer("a  a w a w a w a w end")
+
+    h.perform_through_keymap(ft.repeat_forward, true)
+    h.feedkeys(".", true)
+    assert.buffer("a  a  a w a w end")
   end)
 
   it("should respect old v:count", function()
-    vim.api.nvim_feedkeys("2d", "n", false)
-    h.jump("forward", "none", "w")
-    assert.buffer([[
-      a = ord and other words
-      b = some words
-      c = a word a word and other words
-    ]])
+    h.feedkeys("2d", false)
+    h.hop_with_character(ft.hop_forward_to_char, "w")
+    assert.buffer("a  a w a w a w end")
 
-    vim.api.nvim_feedkeys(".", "nx", false)
-    assert.buffer([[
-      a = ords
-      c = a word a word and other words
-    ]])
+    h.feedkeys(".", true)
+    assert.buffer("a  a w end")
   end)
 
   it("should choose new v:count over old v:count", function()
-    vim.api.nvim_feedkeys("2d", "n", false)
-    h.jump("forward", "none", "w")
-    assert.buffer([[
-    a = ord and other words
-    b = some words
-    c = a word a word and other words
-    ]])
+    h.feedkeys("2d", false)
+    h.hop_with_character(ft.hop_forward_to_char, "w")
+    assert.buffer("a  a w a w a w end")
 
-    vim.api.nvim_feedkeys("3.", "nx", false)
-    assert.buffer([[
-    a = ord a word and other words
-    ]])
+    h.feedkeys("3.", true)
+    assert.buffer("a  end")
   end)
 
-  it("should work after user-repeat", function()
-    h.jump("forward", "none", "w")
+  it("should work with user-repeat with v:count", function()
+    h.hop_with_character(ft.hop_forward_to_char, "w")
 
-    vim.api.nvim_feedkeys("d", "n", false)
-    h.repeat_jump("forward")
-    assert.buffer([[
-      a = | ord and other words
-      b = some words
-      c = a word a word and other words
-    ]])
+    h.feedkeys("2d", false)
+    h.perform_through_keymap(ft.repeat_forward, true)
+    assert.buffer("a | a  a w a w end")
 
-    vim.api.nvim_feedkeys(".", "nx", false)
-    assert.buffer([[
-      a = | ords
-      b = some words
-      c = a word a word and other words
-    ]])
-  end)
-
-  it("should work after user-repeat with v:count", function()
-    h.jump("forward", "none", "w")
-
-    vim.api.nvim_feedkeys("2d", "n", false)
-    h.repeat_jump("forward")
-    assert.buffer([[
-      a = | ords
-      b = some words
-      c = a word a word and other words
-    ]])
-
-    vim.api.nvim_feedkeys(".", "nx", false)
-    assert.buffer([[
-      a = | ord a word and other words
-    ]])
+    h.feedkeys(".", true)
+    assert.buffer("a | a  end")
   end)
 end)

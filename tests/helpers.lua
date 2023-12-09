@@ -1,7 +1,6 @@
-local ft = require("improved-ft")
 local M = {}
 
----Formats text and split to lines.
+---Formats text and splits it to lines.
 ---@param text string
 ---@return string[]
 M.get_user_lines = function(text)
@@ -110,42 +109,20 @@ M.remove_all_mappings = function()
   end
 end
 
-M.reset_ft = function()
-  ft._reset_state()
-end
-
----Performs a given jump through a keymap
----@param direction? "forward"|"backward"
----@param offset? "pre"|"none"|"post"
+---Performs a given hop function with a given character
+---@param hop_function function
 ---@param char string
-M.jump = function(direction, offset, char)
-  M.perform_through_keymap(ft.jump, false, {
-    direction = direction,
-    offset = offset,
-  })
+M.hop_with_character = function(hop_function, char)
+  M.perform_through_keymap(hop_function, false)
   M.feedkeys(char, true)
 end
 
----Performs repeat jump through a keymap.
----@param direction "forward"|"backward"
-M.repeat_jump = function(direction)
-  if direction == "forward" then
-    M.perform_through_keymap(ft.repeat_forward, true)
-  else
-    M.perform_through_keymap(ft.repeat_backward, true)
-  end
-end
-
----Performs a given function with given arguments through a keymap
+---Performs a given function through a keymap
 ---@param fn function to perofrm
 ---@param wait_for_finish boolean
----@param ... any arguments for fn
-M.perform_through_keymap = function(fn, wait_for_finish, ...)
-  local args = {...}
+M.perform_through_keymap = function(fn, wait_for_finish)
   local map_label = "<Plug>(perform_through_keymap)"
-  vim.keymap.set({ "n", "o", "x" }, map_label, function()
-    fn(unpack(args))
-  end)
+  vim.keymap.set({ "n", "o", "x" }, map_label, fn)
   local keys = vim.api.nvim_replace_termcodes(map_label, true, false, true)
 
   local feedkeys_flags = wait_for_finish and "x" or ""
