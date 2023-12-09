@@ -43,61 +43,43 @@ M.jump = function(opts)
   rabbit_hop.hop(opts)
 end
 
-M.repeat_forward = function()
-  local last_hop_options = rabbit_hop.get_last_hop_options()
-  if last_hop_options == nil then
-    return
-  end
-
-  local hop_options = {
-    pattern = last_hop_options.pattern,
-    offset = last_hop_options.offset,
-  }
-
-  if not M._setup_options.use_relative_repetition then
-    hop_options.direction = "forward"
-  else
-    hop_options.direction = M._last_hop_direction
-  end
-
-  if vim.v.count ~= 0 then
-    hop_options.count = vim.v.count
-  else
-    hop_options.count = 1
-  end
-
-  rabbit_hop.hop(hop_options)
-end
-
-M.repeat_backward = function()
-  local last_hop_options = rabbit_hop.get_last_hop_options()
-  if last_hop_options == nil then
-    return
-  end
-
-  local hop_options = {
-    pattern = last_hop_options.pattern,
-    offset = last_hop_options.offset,
-  }
-
-  if not M._setup_options.use_relative_repetition then
-    hop_options.direction = "backward"
-  else
-    if M._last_hop_direction == "forward" then
-      hop_options.direction = "backward"
-    else
-      hop_options.direction = "forward"
+---@param direction "forward"|"backward"
+---@return function
+local get_repetition_function = function(direction)
+  return function()
+    local last_hop_options = rabbit_hop.get_last_hop_options()
+    if last_hop_options == nil then
+      return
     end
-  end
 
-  if vim.v.count ~= 0 then
-    hop_options.count = vim.v.count
-  else
-    hop_options.count = 1
-  end
+    local hop_options = {
+      pattern = last_hop_options.pattern,
+      offset = last_hop_options.offset,
+      direction = direction,
+    }
 
-  rabbit_hop.hop(hop_options)
+    if M._setup_options.use_relative_repetition then
+      if last_hop_options.direction == "backward" then
+        if hop_options.direction == "forward" then
+          hop_options.direction = "backward"
+        else
+          hop_options.direction = "forward"
+        end
+      end
+    end
+
+    if vim.v.count ~= 0 then
+      hop_options.count = vim.v.count
+    else
+      hop_options.count = 1
+    end
+
+    rabbit_hop.hop(hop_options)
+  end
 end
+
+M.repeat_forward = get_repetition_function("forward")
+M.repeat_backward = get_repetition_function("backward")
 
 ---@class IFT_SetupOptions
 ---@field use_default_mappings? boolean
