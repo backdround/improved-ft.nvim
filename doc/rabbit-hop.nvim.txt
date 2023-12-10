@@ -16,10 +16,10 @@ Table of Contents                          *rabbit-hop.nvim-table-of-contents*
 
 
 
-It’s a Neovim plugin that provides a flexible ability to jump to a user
+It’s a Neovim plugin that provides a flexible ability to hop to a user
 defined vim-pattern (quotes, brackets, numbers).
 
-Jumps work:
+Hops work:
 
 - in multiline;
 - in `normal`, `visual`, `operator-pending` and `insert` modes;
@@ -87,7 +87,7 @@ Hop to a number ~
 Hop inside / outside quotes ~
 
 >lua
-    -- Jump forward past quotes.
+    -- Hop forward past quotes.
     vim.keymap.set({"n", "x", "o"}, "s", function()
       rh.hop({
         direction = "forward",
@@ -96,7 +96,7 @@ Hop inside / outside quotes ~
       })
     end)
     
-    -- Jump backward past quotes.
+    -- Hop backward past quotes.
     vim.keymap.set({"n", "x", "o"}, "S", function()
       rh.hop({
         direction = "backward",
@@ -115,7 +115,7 @@ Hop inside / outside round brackets ~
         direction = "forward",
         offset = "post",
         pattern = "\\v[()]",
-        -- If you don't want to jump past ) which is the last character on the line,
+        -- If you don't want to hop past ) which is the last character on the line,
         -- then use this pattern: "\\v((|\\)$@!)"
       })
     end)
@@ -137,10 +137,10 @@ Hop inside / outside round brackets ~
   -------------------------------------------------------------------------------
   Option                    Default           Possible          Description
   ------------------------- ----------------- ----------------- -----------------
-  direction                 "forward"         "forward",        Direction to jump
+  direction                 "forward"         "forward",        Direction to hop
                                               "backward"        
 
-  pattern                   -                 any vim pattern   Pattern to jump
+  pattern                   -                 any vim pattern   Pattern to hop
 
   offset                    "start"           "pre", "start",   Cursor position
                                               "end", "post"     relative to the
