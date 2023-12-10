@@ -13,13 +13,13 @@ M._reset_state = char_hops.reset_state
 M.repeat_forward = char_hops.get_repetition(M.cfg, "forward")
 M.repeat_backward = char_hops.get_repetition(M.cfg, "backward")
 
-M.hop_forward_pre_char = char_hops.get_hop(M.cfg, "forward", "pre")
+M.hop_forward_to_pre_char = char_hops.get_hop(M.cfg, "forward", "pre")
 M.hop_forward_to_char = char_hops.get_hop(M.cfg, "forward", "start")
-M.hop_forward_post_char = char_hops.get_hop(M.cfg, "forward", "post")
+M.hop_forward_to_post_char = char_hops.get_hop(M.cfg, "forward", "post")
 
-M.hop_backward_pre_char = char_hops.get_hop(M.cfg, "backward", "pre")
+M.hop_backward_to_pre_char = char_hops.get_hop(M.cfg, "backward", "pre")
 M.hop_backward_to_char = char_hops.get_hop(M.cfg, "backward", "start")
-M.hop_backward_post_char = char_hops.get_hop(M.cfg, "backward", "post")
+M.hop_backward_to_post_char = char_hops.get_hop(M.cfg, "backward", "post")
 
 ---@class IFT_SetupOptions
 ---@field use_default_mappings? boolean
@@ -45,12 +45,12 @@ M.setup = function(opts)
       })
     end
 
-    map("f", M.hop_forward_to_char, "Jump forward to a given char")
-    map("<S-f>", M.hop_backward_to_char, "Jump backward to a given char")
-    map("t", M.hop_forward_pre_char, "Jump forward before a given char")
-    map("<S-t>", M.hop_backward_pre_char, "Jump backward before a given char")
-    map(";", M.repeat_forward, "Jump forward to a last given char")
-    map(",", M.repeat_backward, "Jump backward to a last given char")
+    map("f", M.hop_forward_to_char, "Hop forward to a given char")
+    map("<S-f>", M.hop_backward_to_char, "Hop backward to a given char")
+    map("t", M.hop_forward_to_pre_char, "Hop forward before a given char")
+    map("<S-t>", M.hop_backward_to_pre_char, "Hop backward before a given char")
+    map(";", M.repeat_forward, "Repeat hop forward to a last given char")
+    map(",", M.repeat_backward, "Repeat hop backward to a last given char")
   end
 
   M._reset_state()

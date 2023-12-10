@@ -17,12 +17,12 @@ describe("hop", function()
     end)
 
     it("pre-forward", function()
-      h.hop_with_character(ft.hop_forward_pre_char, "=")
+      h.hop_with_character(ft.hop_forward_to_pre_char, "=")
       assert.cursor_at(3, 1)
     end)
 
     it("post-forward", function()
-      h.hop_with_character(ft.hop_forward_post_char, "=")
+      h.hop_with_character(ft.hop_forward_to_post_char, "=")
       assert.cursor_at(3, 3)
     end)
 
@@ -32,12 +32,12 @@ describe("hop", function()
     end)
 
     it("pre-backward", function()
-      h.hop_with_character(ft.hop_backward_pre_char, "=")
+      h.hop_with_character(ft.hop_backward_to_pre_char, "=")
       assert.cursor_at(1, 3)
     end)
 
     it("post-backward", function()
-      h.hop_with_character(ft.hop_backward_post_char, "=")
+      h.hop_with_character(ft.hop_backward_to_post_char, "=")
       assert.cursor_at(1, 1)
     end)
   end)
@@ -52,13 +52,13 @@ describe("hop", function()
     end)
 
     it("pre-forward", function()
-      h.hop_with_character(ft.hop_forward_pre_char, "=")
+      h.hop_with_character(ft.hop_forward_to_pre_char, "=")
       h.reset_mode()
       assert.last_selected_region({ 2, 0 }, { 3, 1 })
     end)
 
     it("post-forward", function()
-      h.hop_with_character(ft.hop_forward_post_char, "=")
+      h.hop_with_character(ft.hop_forward_to_post_char, "=")
       h.reset_mode()
       assert.last_selected_region({ 2, 0 }, { 3, 3 })
     end)
@@ -70,13 +70,13 @@ describe("hop", function()
     end)
 
     it("pre-backward", function()
-      h.hop_with_character(ft.hop_backward_pre_char, "=")
+      h.hop_with_character(ft.hop_backward_to_pre_char, "=")
       h.reset_mode()
       assert.last_selected_region({ 1, 3 }, { 2, 0 })
     end)
 
     it("post-backward", function()
-      h.hop_with_character(ft.hop_backward_post_char, "=")
+      h.hop_with_character(ft.hop_backward_to_post_char, "=")
       h.reset_mode()
       assert.last_selected_region({ 1, 1 }, { 2, 0 })
     end)
@@ -94,7 +94,7 @@ describe("hop", function()
     end)
 
     it("pre-forward", function()
-      h.hop_with_character(ft.hop_forward_pre_char, "=")
+      h.hop_with_character(ft.hop_forward_to_pre_char, "=")
       assert.buffer([[
         a = some words here
         = other words
@@ -102,7 +102,7 @@ describe("hop", function()
     end)
 
     it("post-forward", function()
-      h.hop_with_character(ft.hop_forward_post_char, "=")
+      h.hop_with_character(ft.hop_forward_to_post_char, "=")
       assert.buffer([[
         a = some words here
         other words
@@ -118,7 +118,7 @@ describe("hop", function()
     end)
 
     it("pre-backward", function()
-      h.hop_with_character(ft.hop_backward_pre_char, "=")
+      h.hop_with_character(ft.hop_backward_to_pre_char, "=")
       assert.buffer([[
         a =|
         b = other words
@@ -126,7 +126,7 @@ describe("hop", function()
     end)
 
     it("post-backward", function()
-      h.hop_with_character(ft.hop_backward_post_char, "=")
+      h.hop_with_character(ft.hop_backward_to_post_char, "=")
       assert.buffer([[
         a|
         b = other words
@@ -145,12 +145,12 @@ describe("hop", function()
     end)
 
     it("pre-forward", function()
-      h.hop_with_character(ft.hop_forward_pre_char, "=")
+      h.hop_with_character(ft.hop_forward_to_pre_char, "=")
       assert.cursor_at(3, 0)
     end)
 
     it("post-forward", function()
-      h.hop_with_character(ft.hop_forward_post_char, "=")
+      h.hop_with_character(ft.hop_forward_to_post_char, "=")
       assert.cursor_at(3, 2)
     end)
 
@@ -160,12 +160,12 @@ describe("hop", function()
     end)
 
     it("pre-backward", function()
-      h.hop_with_character(ft.hop_backward_pre_char, "=")
+      h.hop_with_character(ft.hop_backward_to_pre_char, "=")
       assert.cursor_at(1, 3)
     end)
 
     it("post-backward", function()
-      h.hop_with_character(ft.hop_backward_post_char, "=")
+      h.hop_with_character(ft.hop_backward_to_post_char, "=")
       assert.cursor_at(1, 1)
     end)
   end)

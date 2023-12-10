@@ -34,7 +34,7 @@ M.is_vim_repeat = function()
   return M._is_repeat
 end
 
----Returns user's pattern to jump
+---Returns user's pattern to hop
 ---@pattern ignore_char_case boolean
 ---@return string
 M.get_user_inputed_pattern = function(ignore_char_case)
