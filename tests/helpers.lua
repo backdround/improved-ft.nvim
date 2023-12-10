@@ -122,7 +122,7 @@ end
 ---@param wait_for_finish boolean
 M.perform_through_keymap = function(fn, wait_for_finish)
   local map_label = "<Plug>(perform_through_keymap)"
-  vim.keymap.set({ "n", "o", "x" }, map_label, fn)
+  vim.keymap.set({ "n", "o", "x", "i" }, map_label, fn)
   local keys = vim.api.nvim_replace_termcodes(map_label, true, false, true)
 
   local feedkeys_flags = wait_for_finish and "x" or ""

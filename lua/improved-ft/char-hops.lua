@@ -36,6 +36,14 @@ M.get_hop = function(config, direction, offset)
         utils.get_user_inputed_pattern(config.ignore_char_case)
     end
 
+    if utils.mode() == "insert" then
+      if hop_options.direction == "forward" then
+        hop_options.insert_mode_target_side = "left"
+      else
+        hop_options.insert_mode_target_side = "right"
+      end
+    end
+
     if vim.v.count ~= 0 then
       hop_options.count = vim.v.count
     else
@@ -71,6 +79,14 @@ M.get_repetition = function(config, direction)
         hop_options.direction = "backward"
       else
         hop_options.direction = "forward"
+      end
+    end
+
+    if utils.mode() == "insert" then
+      if hop_options.direction == "forward" then
+        hop_options.insert_mode_target_side = "left"
+      else
+        hop_options.insert_mode_target_side = "right"
       end
     end
 
