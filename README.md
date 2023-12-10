@@ -47,10 +47,10 @@ local map = function(key, fn, description)
 end
 
 map("f", ft.hop_forward_to_char, "Hop forward to a given char")
-map("<S-f>", ft.hop_backward_to_char, "Hop backward to a given char")
+map("F", ft.hop_backward_to_char, "Hop backward to a given char")
 
 map("t", ft.hop_forward_to_pre_char, "Hop forward before a given char")
-map("<S-t>", ft.hop_backward_to_pre_char, "Hop backward before a given char")
+map("T", ft.hop_backward_to_pre_char, "Hop backward before a given char")
 
 map(";", ft.repeat_forward, "Repeat hop forward to a last given char")
 map(",", ft.repeat_backward, "Repeat hop backward to a last given char")
@@ -84,10 +84,10 @@ local imap = function(key, fn, description)
 end
 
 imap("<M-f>", ft.hop_forward_to_char, "Hop forward to a given char")
-imap("<M-S-f>", ft.hop_backward_to_char, "Hop forward to a given char")
+imap("<M-F>", ft.hop_backward_to_char, "Hop forward to a given char")
 
 imap("<M-t>", ft.hop_forward_to_pre_char, "Hop forward before a given char")
-imap("<M-S-t>", ft.hop_backward_to_pre_char, "Hop forward before a given char")
+imap("<M-T>", ft.hop_backward_to_pre_char, "Hop forward before a given char")
 
 imap("<M-;>", ft.repeat_forward, "Repeat hop forward to a last given char")
 imap("<M-,>", ft.repeat_backward, "Repeat hop backward to a last given char")

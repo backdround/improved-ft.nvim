@@ -46,9 +46,9 @@ M.setup = function(opts)
     end
 
     map("f", M.hop_forward_to_char, "Hop forward to a given char")
-    map("<S-f>", M.hop_backward_to_char, "Hop backward to a given char")
+    map("F", M.hop_backward_to_char, "Hop backward to a given char")
     map("t", M.hop_forward_to_pre_char, "Hop forward before a given char")
-    map("<S-t>", M.hop_backward_to_pre_char, "Hop backward before a given char")
+    map("T", M.hop_backward_to_pre_char, "Hop backward before a given char")
     map(";", M.repeat_forward, "Repeat hop forward to a last given char")
     map(",", M.repeat_backward, "Repeat hop backward to a last given char")
   end
