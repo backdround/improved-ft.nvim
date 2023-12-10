@@ -12,7 +12,6 @@
       "Lua.workspace.checkThirdParty": false,
       "Lua.diagnostics.globals": [
         "vim",
-        "RH_ROOT",
         "assert",
         "assert.is",
         "assert.are",

@@ -9,10 +9,10 @@
   </a>
 </p>
 
-It's a Neovim plugin that provides a flexible ability to jump to a user
+It's a Neovim plugin that provides a flexible ability to hop to a user
 defined vim-pattern (quotes, brackets, numbers).
 
-Jumps work:
+Hops work:
 
 - in multiline;
 - in `normal`, `visual`, `operator-pending` and `insert` modes;
@@ -30,13 +30,13 @@ The plugin:
 ***
 
 ### Preview
-#### Jump inside / outside round brackets
+#### Hop inside / outside round brackets
 <img src="https://github.com/backdround/rabbit-hop.nvim/assets/17349169/bb300bcd-2b87-448c-bb13-483659f456af" width="600px" />
 
-#### Jump inside / outside quotes
+#### Hop inside / outside quotes
 <img src="https://github.com/backdround/rabbit-hop.nvim/assets/17349169/d615afb0-810f-4327-9a07-fa14fdadd9c7" width="600px" />
 
-#### Jump to a number
+#### Hop to a number
 <img src="https://github.com/backdround/rabbit-hop.nvim/assets/17349169/60596f0c-c513-458c-80dc-734bf3d3f609" width="600px" />
 
 ***
@@ -94,7 +94,7 @@ end)
 <details><summary>Hop inside / outside quotes</summary>
 
 ```lua
--- Jump forward past quotes.
+-- Hop forward past quotes.
 vim.keymap.set({"n", "x", "o"}, "s", function()
   rh.hop({
     direction = "forward",
@@ -103,7 +103,7 @@ vim.keymap.set({"n", "x", "o"}, "s", function()
   })
 end)
 
--- Jump backward past quotes.
+-- Hop backward past quotes.
 vim.keymap.set({"n", "x", "o"}, "S", function()
   rh.hop({
     direction = "backward",
@@ -124,7 +124,7 @@ vim.keymap.set({"n", "x", "o"}, "s", function()
     direction = "forward",
     offset = "post",
     pattern = "\\v[()]",
-    -- If you don't want to jump past ) which is the last character on the line,
+    -- If you don't want to hop past ) which is the last character on the line,
     -- then use this pattern: "\\v((|\\)$@!)"
   })
 end)
@@ -150,7 +150,7 @@ end)
 
 | Option | Default | Possible | Description |
 | --- | --- | --- | --- |
-| `direction` | `"forward"` | `"forward"`, `"backward"` | Direction to jump |
-| `pattern` | - | any vim pattern | Pattern to jump |
+| `direction` | `"forward"` | `"forward"`, `"backward"` | Direction to hop |
+| `pattern` | - | any vim pattern | Pattern to hop |
 | `offset` | `"start"` | `"pre"`, `"start"`, `"end"`, `"post"` | Cursor position relative to the pattern |
 | `insert_mode_target_side` | `"left"` | `"left"`, `"right"` | Side to place the cursor in insert mode. It's applied after the offset.
