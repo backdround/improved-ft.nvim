@@ -11,8 +11,14 @@ Additional features:
 <!-- panvimdoc-ignore-start -->
 
 ### Preview
-#### Hop to a character (pre / none / post)
-<img src="https://github.com/backdround/improved-ft.nvim/assets/17349169/0931c570-e0ef-4eb1-940f-20c268262f1b" width="650px" />
+#### Basic
+<img src="https://github.com/backdround/improved-ft.nvim/assets/17349169/5619ae36-217d-432b-8af9-6d27502f0965" width="600px" />
+
+#### Past a character
+<img src="https://github.com/backdround/improved-ft.nvim/assets/17349169/cc761597-745d-421f-844c-1d028258a067" width="600px" />
+
+#### In insert mode
+<img src="https://github.com/backdround/improved-ft.nvim/assets/17349169/9eca335a-335b-40d7-a0ca-d012b9357aa8" width="600px" />
 
 ---
 
