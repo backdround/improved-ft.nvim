@@ -16,32 +16,32 @@ describe("setup-options", function()
       ft.setup({ use_default_mappings = true })
     end)
 
-    it("should map 'f' as a forward jump to a char", function()
+    it("should map 'f' as a forward hop to a char", function()
       vim.api.nvim_feedkeys("fc", "x", false)
       assert.cursor_at(3, 0)
     end)
 
-    it("should map 'F' as a backward jump to a char", function()
+    it("should map 'F' as a backward hop to a char", function()
       vim.api.nvim_feedkeys("Fa", "x", false)
       assert.cursor_at(1, 4)
     end)
 
-    it("should map 't' as a forward jump to a pre char", function()
+    it("should map 't' as a forward hop to a pre char", function()
       vim.api.nvim_feedkeys("tc", "x", false)
       assert.cursor_at(3, 1)
     end)
 
-    it("should map 'T' as a backward jump to a pre char", function()
+    it("should map 'T' as a backward hop to a pre char", function()
       vim.api.nvim_feedkeys("Ta", "x", false)
       assert.cursor_at(1, 3)
     end)
 
-    it("should map ';' as a forward repeat jump", function()
+    it("should map ';' as a forward repeat hop", function()
       vim.api.nvim_feedkeys("fc;", "x", false)
       assert.cursor_at(3, 2)
     end)
 
-    it("should map ',' as a backward repeat jump", function()
+    it("should map ',' as a backward repeat hop", function()
       vim.api.nvim_feedkeys("Fa,", "x", false)
       assert.cursor_at(1, 2)
     end)
@@ -55,23 +55,21 @@ describe("setup-options", function()
     assert.are.equals(0, #keymaps)
   end)
 
-  describe("ignore_user_char_case", function()
-    it("if true then it should ignore user's char case", function()
-      ft.setup({ ignore_user_char_case = true })
-      h.perform_through_keymap(ft.jump, false)
-      vim.api.nvim_feedkeys("C", "x", false)
+  describe("ignore_char_case", function()
+    it("if true then it should ignore search char case", function()
+      ft.setup({ ignore_char_case = true })
+      h.hop_with_character(ft.hop_forward_to_char, "C")
       assert.cursor_at(3, 0)
     end)
 
     it("if false then it shouldn't ignore user's char case", function()
-      ft.setup({ ignore_user_char_case = false })
-      h.perform_through_keymap(ft.jump, false)
-      vim.api.nvim_feedkeys("C", "x", false)
+      ft.setup({ ignore_char_case = false })
+      h.hop_with_character(ft.hop_forward_to_char, "C")
       assert.cursor_at(3, 4)
     end)
   end)
 
-  describe("use_relative_repetition == true should respect a last jump direction.", function()
+  describe("use_relative_repetition == true should respect a last hop direction.", function()
     before_each(function()
       h.get_preset([[
         a a a a a a a
@@ -84,44 +82,28 @@ describe("setup-options", function()
     end)
 
     describe("repeat_forward", function()
-      it("should jump forward after forward jump", function()
-        h.perform_through_keymap(ft.jump, true, {
-          direction = "forward",
-          pattern = "a",
-          save_for_repetition = true,
-        })
+      it("should hop forward after forward hop", function()
+        h.hop_with_character(ft.hop_forward_to_char, "a")
         h.perform_through_keymap(ft.repeat_forward, true)
         assert.cursor_at(1, 10)
       end)
 
-      it("should jump backward after backward jump", function()
-        h.perform_through_keymap(ft.jump, true, {
-          direction = "backward",
-          pattern = "a",
-          save_for_repetition = true,
-        })
+      it("should hop backward after backward hop", function()
+        h.hop_with_character(ft.hop_backward_to_char, "a")
         h.perform_through_keymap(ft.repeat_forward, true)
         assert.cursor_at(1, 2)
       end)
     end)
 
     describe("repeat_backward", function()
-      it("should jump backward after forward jump", function()
-        h.perform_through_keymap(ft.jump, true, {
-          direction = "forward",
-          pattern = "a",
-          save_for_repetition = true,
-        })
+      it("should hop backward after forward hop", function()
+        h.hop_with_character(ft.hop_forward_to_char, "a")
         h.perform_through_keymap(ft.repeat_backward, true)
         assert.cursor_at(1, 6)
       end)
 
-      it("should jump forward after backward jump", function()
-        h.perform_through_keymap(ft.jump, true, {
-          direction = "backward",
-          pattern = "a",
-          save_for_repetition = true,
-        })
+      it("should hop forward after backward hop", function()
+        h.hop_with_character(ft.hop_backward_to_char, "a")
         h.perform_through_keymap(ft.repeat_backward, true)
         assert.cursor_at(1, 6)
       end)

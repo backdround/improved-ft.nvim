@@ -1,6 +1,6 @@
 local M = {}
 
----@return "operator-pending"|"visual"|"normal"
+---@return "operator-pending"|"visual"|"normal"|"insert"
 M.mode = function()
   local m = tostring(vim.fn.mode(true))
 
@@ -8,6 +8,8 @@ M.mode = function()
     return "operator-pending"
   elseif m:find("[vV]") then
     return "visual"
+  elseif m:find("i") then
+    return "insert"
   else
     return "normal"
   end
@@ -32,12 +34,22 @@ M.is_vim_repeat = function()
   return M._is_repeat
 end
 
----Returns user's character to jump
+---Returns user's pattern to hop
+---@pattern ignore_char_case boolean
 ---@return string
-M.get_user_inputed_char = function()
+M.get_user_inputed_pattern = function(ignore_char_case)
   local char = vim.fn.getchar()
   char = vim.fn.nr2char(char)
-  return char
+
+  local pattern = "\\M" .. vim.fn.escape(char, "^$\\")
+
+  local search_flags = "\\C"
+  if ignore_char_case then
+    search_flags = "\\c"
+  end
+
+  pattern = search_flags .. pattern
+  return pattern
 end
 
 return M

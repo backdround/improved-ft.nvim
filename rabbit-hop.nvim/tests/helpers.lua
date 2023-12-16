@@ -1,6 +1,6 @@
 local M = {}
 
----Formats text and splits it to lines.
+---Formats text and split to lines.
 ---@param text string
 ---@return string[]
 M.get_user_lines = function(text)
@@ -73,6 +73,10 @@ M.trigger_visual = function()
   vim.api.nvim_feedkeys("v", "n", false)
 end
 
+M.trigger_insert = function()
+  vim.api.nvim_feedkeys("i", "n", false)
+end
+
 M.trigger_delete = function()
   vim.api.nvim_feedkeys("d", "n", false)
 end
@@ -101,28 +105,16 @@ M.set_cursor = function(line, column)
   vim.api.nvim_win_set_cursor(0, { line, column })
 end
 
-M.remove_all_mappings = function()
-  local keymaps = vim.api.nvim_get_keymap("")
-
-  for _, keymap in ipairs(keymaps) do
-    vim.keymap.del(keymap.mode, keymap.lhs)
-  end
-end
-
----Performs a given hop function with a given character
----@param hop_function function
----@param char string
-M.hop_with_character = function(hop_function, char)
-  M.perform_through_keymap(hop_function, false)
-  M.feedkeys(char, true)
-end
-
----Performs a given function through a keymap
+---Performs a given function with given arguments through a keymap
 ---@param fn function to perofrm
 ---@param wait_for_finish boolean
-M.perform_through_keymap = function(fn, wait_for_finish)
+---@param ... any arguments for fn
+M.perform_through_keymap = function(fn, wait_for_finish, ...)
+  local args = {...}
   local map_label = "<Plug>(perform_through_keymap)"
-  vim.keymap.set({ "n", "o", "x", "i" }, map_label, fn)
+  vim.keymap.set({ "n", "o", "x", "i" }, map_label, function()
+    fn(unpack(args))
+  end)
   local keys = vim.api.nvim_replace_termcodes(map_label, true, false, true)
 
   local feedkeys_flags = wait_for_finish and "x" or ""

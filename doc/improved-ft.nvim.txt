@@ -4,33 +4,22 @@
 Table of Contents                         *improved-ft.nvim-table-of-contents*
 
 1. Improved-ft.nvim                        |improved-ft.nvim-improved-ft.nvim|
-2. Configuration example              |improved-ft.nvim-configuration-example|
-3. Additional configuration examples|improved-ft.nvim-additional-configuration-examples|
-4. API Functions                              |improved-ft.nvim-api-functions|
-  - Api usage example:     |improved-ft.nvim-api-functions-api-usage-example:|
+2. Basic configuration                  |improved-ft.nvim-basic-configuration|
+3. Advanced configuration            |improved-ft.nvim-advanced-configuration|
 
 ==============================================================================
 1. Improved-ft.nvim                        *improved-ft.nvim-improved-ft.nvim*
 
-It’s a Neovim plugin that improves default `f/t` jump abilities
+It’s a feature-rich, but straight-forward Neovim plugin that improves default
+`f/t` hop abilities.
 
-It provides:
-
-- multiline jump to a given character.
-- ability to jump to a user defined vim-pattern.
-- stable next / previous jumps that don’t depend on last jump direction.
-- additional `post` character offset (as well as default `pre` and `none` offsets).
-
-Differences to other similar plugins:
-
-- Doesn’t use any labels.
-- Doesn’t depend on `vim-repeat`.
-- Uses lua only.
-- Adds ability to jump to a user defined vim-pattern.
+Additional features: - Works in multiline; - Works in `insert` mode; - Has the
+additional `post` offset; - Has the aibilty of stable next / previous hops
+(don’t depend on last hop direction).
 
 
 ==============================================================================
-2. Configuration example              *improved-ft.nvim-configuration-example*
+2. Basic configuration                  *improved-ft.nvim-basic-configuration*
 
 >lua
     local ft = require("improved-ft")
@@ -38,9 +27,11 @@ Differences to other similar plugins:
       -- Maps default f/F/t/T/;/, keys
       -- default: false
       use_default_mappings = true,
-      -- Ignores case of interactively given characters.
+    
+      -- Ignores case of the given characters.
       -- default: false
-      ignore_user_char_case = true,
+      ignore_char_case = true,
+    
       -- Takes a last jump direction into account during repetition jumps.
       -- default: false
       use_relative_repetition = true,
@@ -49,173 +40,57 @@ Differences to other similar plugins:
 
 
 ==============================================================================
-3. Additional configuration examples*improved-ft.nvim-additional-configuration-examples*
+3. Advanced configuration            *improved-ft.nvim-advanced-configuration*
 
-Jump past a character ~
+Basic mappings ~
 
 >lua
-    -- Jump forward past a given by user character.
-    vim.keymap.set({"n", "x", "o"}, "s", function()
-      ft.jump({
-        direction = "forward",
-        offset = "post",
-        pattern = nil,
+    local map = function(key, fn, description)
+      vim.keymap.set({ "n", "x", "o" }, key, fn, {
+        desc = description,
       })
-    end)
+    end
     
-    -- Jump backward past a given by user character.
-    vim.keymap.set({"n", "x", "o"}, "S", function()
-      ft.jump({
-        direction = "backward",
-        offset = "post",
-        pattern = nil,
-      })
-    end)
+    map("f", ft.hop_forward_to_char, "Hop forward to a given char")
+    map("F", ft.hop_backward_to_char, "Hop backward to a given char")
+    
+    map("t", ft.hop_forward_to_pre_char, "Hop forward before a given char")
+    map("T", ft.hop_backward_to_pre_char, "Hop backward before a given char")
+    
+    map(";", ft.repeat_forward, "Repeat hop forward to a last given char")
+    map(",", ft.repeat_backward, "Repeat hop backward to a last given char")
 <
 
-Jump past any quotes ~
+Post character mappings ~
 
 >lua
-    -- Jump forward past any quotes.
-    vim.keymap.set({"n", "x", "o"}, "s", function()
-      ft.jump({
-        direction = "forward",
-        offset = "post",
-        pattern = "\\v[\"'`]",
+    local map = function(key, fn, description)
+      vim.keymap.set({ "n", "x", "o" }, key, fn, {
+        desc = description,
       })
-    end)
+    end
     
-    -- Jump backward past any quotes.
-    vim.keymap.set({"n", "x", "o"}, "S", function()
-      ft.jump({
-        direction = "backward",
-        offset = "post",
-        pattern = "\\v[\"'`]",
-      })
-    end)
+    map("s", ft.hop_forward_to_post_char, "Hop forward after a given char")
+    map("S", ft.hop_backward_to_post_char, "Hop backward after a given char")
 <
 
-Jump inside round brackets ~
+Insert mode mappings ~
 
 >lua
-    -- Jump forward inside round brackets.
-    vim.keymap.set({"n", "x", "o"}, "s", function()
-      ft.jump({
-        direction = "forward",
-        offset = "post",
-        pattern = "\\M(",
+    local imap = function(key, fn, description)
+      vim.keymap.set("i", key, fn, {
+        desc = description,
       })
-    end)
+    end
     
-    -- Jump backward inside round brackets.
-    vim.keymap.set({"n", "x", "o"}, "S", function()
-      ft.jump({
-        direction = "backward",
-        offset = "post",
-        pattern = "\\M)",
-      })
-    end)
-<
-
-Jump inside / outside round brackets ~
-
->lua
-    -- Jump forward inside / outside round brackets.
-    vim.keymap.set({"n", "x", "o"}, "s", function()
-      ft.jump({
-        direction = "forward",
-        offset = "post",
-        pattern = "\\v[()]",
-        -- If you don't want to jump post ) that is the last character on the line.
-        -- use this pattern: "\\v((|\\)$@!)"
-      })
-    end)
+    imap("<M-f>", ft.hop_forward_to_char, "Hop forward to a given char")
+    imap("<M-F>", ft.hop_backward_to_char, "Hop forward to a given char")
     
-    -- Jump backward inside / outside round brackets.
-    vim.keymap.set({"n", "x", "o"}, "S", function()
-      ft.jump({
-        direction = "backward",
-        offset = "post",
-        pattern = "\\v[()]",
-      })
-    end)
-<
-
-Jump to a number ~
-
->lua
-    -- Jump forward to a number.
-    vim.keymap.set({"n", "x", "o"}, "s", function()
-      ft.jump({
-        direction = "forward",
-        offset = "none",
-        pattern = "\\v\\d+",
-      })
-    end)
+    imap("<M-t>", ft.hop_forward_to_pre_char, "Hop forward before a given char")
+    imap("<M-T>", ft.hop_backward_to_pre_char, "Hop forward before a given char")
     
-    -- Jump backward to a number.
-    vim.keymap.set({"n", "x", "o"}, "S", function()
-      ft.jump({
-        direction = "backward",
-        offset = "none",
-        pattern = "\\v\\d+",
-      })
-    end)
-<
-
-
-==============================================================================
-4. API Functions                              *improved-ft.nvim-api-functions*
-
-- `jump` - Perform a jump to a character or a predefined pattern.
-- `repeat_forward` - Repeat last saved jump forward.
-- `repeat_backward` - Repeat last saved jump backward.
-
-  ---------------------------------------------------------------------------
-  jump option           Default           Possible          Description
-  --------------------- ----------------- ----------------- -----------------
-  direction             "forward"         "forward",        Direction to jump
-                                          "backward"        
-
-  pattern               nil (wait for a   any vim pattern   Pattern to jump
-                        user input)                         
-
-  offset                "none"            "pre", "none",    Offset to a
-                                          "post"            character /
-                                                            pattern
-
-  save_for_repetition   pattern == nil    true, false       Save the jump for
-                                                            repeat_forward
-                                                            and
-                                                            repeat_backward
-  ---------------------------------------------------------------------------
-
-API USAGE EXAMPLE:         *improved-ft.nvim-api-functions-api-usage-example:*
-
->lua
-    
-    local ft = require("improved-ft")
-    
-    vim.keymap.set({"n", "x", "o"}, ")", ft.repeat_forward)
-    vim.keymap.set({"n", "x", "o"}, "(", ft.repeat_backward)
-    
-    vim.keymap.set({"n", "x", "o"}, "s", function()
-      ft.jump({
-        direction = "forward",
-        offset = "none",
-        pattern = "\\M=",
-        save_for_repetition = false,
-      })
-    end)
-    
-    vim.keymap.set({"n", "x", "o"}, "S", function()
-      ft.jump({
-        direction = "backward",
-        offset = "none",
-        pattern = "\\M=",
-        save_for_repetition = false,
-      })
-    end)
+    imap("<M-;>", ft.repeat_forward, "Repeat hop forward to a last given char")
+    imap("<M-,>", ft.repeat_backward, "Repeat hop backward to a last given char")
 <
 
 Generated by panvimdoc <https://github.com/kdheepak/panvimdoc>

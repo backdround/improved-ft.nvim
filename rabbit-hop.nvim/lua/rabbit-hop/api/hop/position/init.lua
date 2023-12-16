@@ -1,20 +1,33 @@
-local utils = require("improved-ft.position.utils")
+local utils = require(... .. ".utils")
 
--- It won't work if getmetatable(p1) ~= getmetatable(p2).
--- That's why it isn't declared near the usage place.
+-- The variable must be file local in order to '__eq' work properly.
+-- lua 5.1 checks getmetatable(p1) == getmetatable(p2) before performing the
+-- real check.
 local position_metatable = {
   __eq = function(p1, p2)
     return p1.line == p2.line and p1.column == p2.column
+  end,
+
+  __lt = function(p1, p2)
+    if p1.line < p2.line then
+      return true
+    end
+
+    if p1.line == p2.line and p1.column < p2.column then
+      return true
+    end
+
+    return false
   end
 }
 
 ---@param line number virtual line
 ---@param column number virtual column
 ---@param n_is_pointable boolean position can point to a \n
----@return IFT_Position
+---@return RH_Position
 local new_position = function(line, column, n_is_pointable)
   ---Represents possible cursor position.
-  ---@class IFT_Position
+  ---@class RH_Position
   local p = {
     line = line,
     column = column,
@@ -34,7 +47,7 @@ local new_position = function(line, column, n_is_pointable)
   end
 
   ---Selects a region from the current position to a given position.
-  ---@param position IFT_Position
+  ---@param position RH_Position
   p.select_region_to = function(position)
     local byte_position1 = utils.from_virtual_to_byte(raw(p))
     local byte_position2 = utils.from_virtual_to_byte(raw(position))
@@ -87,13 +100,20 @@ end
 
 local M = {}
 
----Creates IFT_Position from the position of the current cursor.
+---Creates RH_Position from the position of the current cursor.
 ---@param n_is_pointable boolean position can point to a \n
----@return IFT_Position
+---@return RH_Position
 M.from_cursor = function(n_is_pointable)
   local byte_position = vim.api.nvim_win_get_cursor(0)
   local position = utils.from_byte_to_virtual(byte_position)
   return new_position(position[1], position[2], n_is_pointable)
+end
+
+---Creates RH_Position from an existing RH_Position
+---@param p RH_Position
+---@return RH_Position
+M.copy = function(p)
+  return new_position(p.line, p.column, p.n_is_pointable)
 end
 
 return M
