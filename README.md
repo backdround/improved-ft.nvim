@@ -1,4 +1,15 @@
 # Improved-ft.nvim
+
+<p align="center">
+  <a href="https://github.com/backdround/improved-ft.nvim/actions">
+    <img src="https://img.shields.io/github/actions/workflow/status/backdround/improved-ft.nvim/tests.yaml?branch=main&label=Tests&style=flat-square" alt="Tests">
+  </a>
+  <a href="https://github.com/backdround/improved-ft.nvim/actions">
+    <img src="https://img.shields.io/github/actions/workflow/status/backdround/improved-ft.nvim/docs.yaml?branch=main&label=Doc%20generation&status=gen&style=flat-square" alt="Tests">
+  </a>
+</p>
+
+
 It's a feature-rich, but straight-forward Neovim plugin that improves default
 `f/t` hop abilities.
 
