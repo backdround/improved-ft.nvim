@@ -46,4 +46,17 @@ describe("top-level", function()
       rabbit_hop_api.get_last_operator_pending_hop_options()
     assert.are.same(preset_hop_options1, last_operator_pending_hop_options)
   end)
+
+  it("cache_options == false shouldn't save options", function()
+    local cache_options = false
+    h.perform_through_keymap(
+      rabbit_hop_api.hop,
+      true,
+      preset_hop_options1,
+      cache_options
+    )
+
+    local last_hop_options = rabbit_hop_api.get_last_hop_options()
+    assert.is.Nil(last_hop_options)
+  end)
 end)
