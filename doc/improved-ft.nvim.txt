@@ -10,6 +10,11 @@ Table of Contents                         *improved-ft.nvim-table-of-contents*
 ==============================================================================
 1. Improved-ft.nvim                        *improved-ft.nvim-improved-ft.nvim*
 
+
+
+
+
+
 It’s a feature-rich, but straight-forward Neovim plugin that improves default
 `f/t` hop abilities.
 
