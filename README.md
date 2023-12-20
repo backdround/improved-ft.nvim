@@ -17,7 +17,7 @@ Additional features:
 - Works in multiline;
 - Works in `insert` mode;
 - Has the additional `post` offset;
-- Has the aibilty of stable next / previous hops (don't depend on last hop direction).
+- Has the ability of stable next / previous hops (don't depend on last hop direction).
 
 <!-- panvimdoc-ignore-start -->
 
