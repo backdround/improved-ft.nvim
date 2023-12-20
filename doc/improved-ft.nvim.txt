@@ -19,7 +19,7 @@ It’s a feature-rich, but straight-forward Neovim plugin that improves default
 `f/t` hop abilities.
 
 Additional features: - Works in multiline; - Works in `insert` mode; - Has the
-additional `post` offset; - Has the aibilty of stable next / previous hops
+additional `post` offset; - Has the ability of stable next / previous hops
 (don’t depend on last hop direction).
 
 
