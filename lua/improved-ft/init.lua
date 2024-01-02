@@ -14,6 +14,7 @@ local M = {
 
 M._reset_state = char_hops.reset_state
 
+---@param direction "forward"|"backward"
 local get_repeat = function(direction)
   return function()
     if direction == "forward" then
@@ -24,6 +25,9 @@ local get_repeat = function(direction)
   end
 end
 
+---@param direction "forward"|"backward"
+---@param offset number
+---@return function
 local get_hop = function(direction, offset)
   return function()
     char_hops.hop(M.cfg.ignore_char_case, direction, offset)
@@ -33,13 +37,13 @@ end
 M.repeat_forward = get_repeat("forward")
 M.repeat_backward = get_repeat("backward")
 
-M.hop_forward_to_pre_char = get_hop("forward", "pre")
-M.hop_forward_to_char = get_hop("forward", "start")
-M.hop_forward_to_post_char = get_hop("forward", "post")
+M.hop_forward_to_pre_char = get_hop("forward", -1)
+M.hop_forward_to_char = get_hop("forward", 0)
+M.hop_forward_to_post_char = get_hop("forward", 1)
 
-M.hop_backward_to_pre_char = get_hop("backward", "pre")
-M.hop_backward_to_char = get_hop("backward", "start")
-M.hop_backward_to_post_char = get_hop("backward", "post")
+M.hop_backward_to_pre_char = get_hop("backward", 1)
+M.hop_backward_to_char = get_hop("backward", 0)
+M.hop_backward_to_post_char = get_hop("backward", -1)
 
 ---@class IFT_SetupOptions
 ---@field use_default_mappings? boolean
