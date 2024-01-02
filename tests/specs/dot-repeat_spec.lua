@@ -26,7 +26,7 @@ describe("dot `.` repeat", function()
     assert.buffer("a   a w a w a w end")
   end)
 
-  it("should preserve option after non operator-pending repeat", function()
+  it("should preserve option after user repeat", function()
     h.feedkeys("d", false)
     h.hop_with_character(ft.hop_forward_to_char, "w")
     assert.buffer("a  a w a w a w a w end")

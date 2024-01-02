@@ -1,5 +1,9 @@
 local char_hops = require("improved-ft.char-hops")
 
+---@class IFT_Conifg
+---@field ignore_char_case boolean
+---@field use_relative_repetition boolean
+
 local M = {
   ---@type IFT_Conifg
   cfg = {
@@ -10,16 +14,36 @@ local M = {
 
 M._reset_state = char_hops.reset_state
 
-M.repeat_forward = char_hops.get_repetition(M.cfg, "forward")
-M.repeat_backward = char_hops.get_repetition(M.cfg, "backward")
+---@param direction "forward"|"backward"
+local get_repeat = function(direction)
+  return function()
+    if direction == "forward" then
+      char_hops.repeat_forward(M.cfg.use_relative_repetition)
+    else
+      char_hops.repeat_backward(M.cfg.use_relative_repetition)
+    end
+  end
+end
 
-M.hop_forward_to_pre_char = char_hops.get_hop(M.cfg, "forward", "pre")
-M.hop_forward_to_char = char_hops.get_hop(M.cfg, "forward", "start")
-M.hop_forward_to_post_char = char_hops.get_hop(M.cfg, "forward", "post")
+---@param direction "forward"|"backward"
+---@param offset number
+---@return function
+local get_hop = function(direction, offset)
+  return function()
+    char_hops.hop(M.cfg.ignore_char_case, direction, offset)
+  end
+end
 
-M.hop_backward_to_pre_char = char_hops.get_hop(M.cfg, "backward", "pre")
-M.hop_backward_to_char = char_hops.get_hop(M.cfg, "backward", "start")
-M.hop_backward_to_post_char = char_hops.get_hop(M.cfg, "backward", "post")
+M.repeat_forward = get_repeat("forward")
+M.repeat_backward = get_repeat("backward")
+
+M.hop_forward_to_pre_char = get_hop("forward", -1)
+M.hop_forward_to_char = get_hop("forward", 0)
+M.hop_forward_to_post_char = get_hop("forward", 1)
+
+M.hop_backward_to_pre_char = get_hop("backward", 1)
+M.hop_backward_to_char = get_hop("backward", 0)
+M.hop_backward_to_post_char = get_hop("backward", -1)
 
 ---@class IFT_SetupOptions
 ---@field use_default_mappings? boolean
