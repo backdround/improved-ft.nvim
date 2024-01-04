@@ -4,7 +4,7 @@ local h = require("tests.helpers")
 require("tests.custom-asserts").register()
 
 describe("dot `.` repeat", function()
-  before_each(h.get_preset("a | a w a w a w a w a w end", { 1, 2 }))
+  before_each(h.get_preset("a | a w a w a w a w a w end", { 1, 3 }))
 
   it("should work", function()
     h.feedkeys("d", false)
