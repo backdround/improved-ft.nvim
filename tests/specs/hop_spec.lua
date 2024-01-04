@@ -43,42 +43,47 @@ describe("hop", function()
   end)
 
   describe("visual-mode", function()
-    before_each(h.trigger_visual)
 
     it("forward", function()
+      h.trigger_visual()
+
       h.hop_with_character(ft.hop_forward_to_char, "=")
-      h.reset_mode()
-      assert.last_selected_region({ 2, 0 }, { 3, 2 })
+      assert.selected_region({ 2, 0 }, { 3, 2 })
     end)
 
     it("pre-forward", function()
+      h.trigger_visual()
+
       h.hop_with_character(ft.hop_forward_to_pre_char, "=")
-      h.reset_mode()
-      assert.last_selected_region({ 2, 0 }, { 3, 1 })
+      assert.selected_region({ 2, 0 }, { 3, 1 })
     end)
 
     it("post-forward", function()
+      h.trigger_visual()
+
       h.hop_with_character(ft.hop_forward_to_post_char, "=")
-      h.reset_mode()
-      assert.last_selected_region({ 2, 0 }, { 3, 3 })
+      assert.selected_region({ 2, 0 }, { 3, 3 })
     end)
 
     it("backward", function()
+      h.trigger_visual()
+
       h.hop_with_character(ft.hop_backward_to_char, "=")
-      h.reset_mode()
-      assert.last_selected_region({ 1, 2 }, { 2, 0 })
+      assert.selected_region({ 1, 2 }, { 2, 0 })
     end)
 
     it("pre-backward", function()
+      h.trigger_visual()
+
       h.hop_with_character(ft.hop_backward_to_pre_char, "=")
-      h.reset_mode()
-      assert.last_selected_region({ 1, 3 }, { 2, 0 })
+      assert.selected_region({ 1, 3 }, { 2, 0 })
     end)
 
     it("post-backward", function()
+      h.trigger_visual()
+
       h.hop_with_character(ft.hop_backward_to_post_char, "=")
-      h.reset_mode()
-      assert.last_selected_region({ 1, 1 }, { 2, 0 })
+      assert.selected_region({ 1, 1 }, { 2, 0 })
     end)
   end)
 
