@@ -174,4 +174,20 @@ describe("hop", function()
       assert.cursor_at(1, 2)
     end)
   end)
+
+  it("multi-byte text", function()
+    h.get_preset("некоторый Текст", { 1, 1 })()
+
+    h.hop_with_character(ft.hop_forward_to_char, "Т")
+    assert.cursor_at(1, 11)
+  end)
+
+  it("multi-column text", function()
+    local double_tab = "		"
+    local buffer = "text" .. double_tab .. "here"
+    h.get_preset(buffer, { 1, 1 })()
+
+    h.hop_with_character(ft.hop_forward_to_char, "h")
+    assert.cursor_at(1, 7)
+  end)
 end)
