@@ -4,7 +4,7 @@ local h = require("tests.helpers")
 require("tests.custom-asserts").register()
 
 describe("complex cases", function()
-  before_each(h.get_preset("a | a w a w a w a w a w end", { 1, 2 }))
+  before_each(h.get_preset("a | a w a w a w a w a w end", { 1, 3 }))
 
   describe("operator pending modification by a repetition hop", function()
     it("shouldn't be affected by hops", function()
@@ -31,7 +31,7 @@ describe("complex cases", function()
       vim.wait(0)
 
       h.perform_through_keymap(ft.repeat_forward, true)
-      assert.cursor_at(1, 6)
+      assert.cursor_at(1, 7)
     end)
   end)
 end)

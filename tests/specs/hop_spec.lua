@@ -8,77 +8,82 @@ describe("hop", function()
     a = some words here
     |
     b = other words
-  ]], { 2, 0 }))
+  ]], { 2, 1 }))
 
   describe("normal-mode", function()
     it("forward", function()
       h.hop_with_character(ft.hop_forward_to_char, "=")
-      assert.cursor_at(3, 2)
+      assert.cursor_at(3, 3)
     end)
 
     it("pre-forward", function()
       h.hop_with_character(ft.hop_forward_to_pre_char, "=")
-      assert.cursor_at(3, 1)
+      assert.cursor_at(3, 2)
     end)
 
     it("post-forward", function()
       h.hop_with_character(ft.hop_forward_to_post_char, "=")
-      assert.cursor_at(3, 3)
+      assert.cursor_at(3, 4)
     end)
 
     it("backward", function()
       h.hop_with_character(ft.hop_backward_to_char, "=")
-      assert.cursor_at(1, 2)
+      assert.cursor_at(1, 3)
     end)
 
     it("pre-backward", function()
       h.hop_with_character(ft.hop_backward_to_pre_char, "=")
-      assert.cursor_at(1, 3)
+      assert.cursor_at(1, 4)
     end)
 
     it("post-backward", function()
       h.hop_with_character(ft.hop_backward_to_post_char, "=")
-      assert.cursor_at(1, 1)
+      assert.cursor_at(1, 2)
     end)
   end)
 
   describe("visual-mode", function()
-    before_each(h.trigger_visual)
 
     it("forward", function()
+      h.trigger_visual()
+
       h.hop_with_character(ft.hop_forward_to_char, "=")
-      h.reset_mode()
-      assert.last_selected_region({ 2, 0 }, { 3, 2 })
+      assert.selected_region({ 2, 1 }, { 3, 3 })
     end)
 
     it("pre-forward", function()
+      h.trigger_visual()
+
       h.hop_with_character(ft.hop_forward_to_pre_char, "=")
-      h.reset_mode()
-      assert.last_selected_region({ 2, 0 }, { 3, 1 })
+      assert.selected_region({ 2, 1 }, { 3, 2 })
     end)
 
     it("post-forward", function()
+      h.trigger_visual()
+
       h.hop_with_character(ft.hop_forward_to_post_char, "=")
-      h.reset_mode()
-      assert.last_selected_region({ 2, 0 }, { 3, 3 })
+      assert.selected_region({ 2, 1 }, { 3, 4 })
     end)
 
     it("backward", function()
+      h.trigger_visual()
+
       h.hop_with_character(ft.hop_backward_to_char, "=")
-      h.reset_mode()
-      assert.last_selected_region({ 1, 2 }, { 2, 0 })
+      assert.selected_region({ 1, 3 }, { 2, 1 })
     end)
 
     it("pre-backward", function()
+      h.trigger_visual()
+
       h.hop_with_character(ft.hop_backward_to_pre_char, "=")
-      h.reset_mode()
-      assert.last_selected_region({ 1, 3 }, { 2, 0 })
+      assert.selected_region({ 1, 4 }, { 2, 1 })
     end)
 
     it("post-backward", function()
+      h.trigger_visual()
+
       h.hop_with_character(ft.hop_backward_to_post_char, "=")
-      h.reset_mode()
-      assert.last_selected_region({ 1, 1 }, { 2, 0 })
+      assert.selected_region({ 1, 2 }, { 2, 1 })
     end)
   end)
 
@@ -141,32 +146,48 @@ describe("hop", function()
 
     it("forward", function()
       h.hop_with_character(ft.hop_forward_to_char, "=")
-      assert.cursor_at(3, 1)
+      assert.cursor_at(3, 2)
     end)
 
     it("pre-forward", function()
       h.hop_with_character(ft.hop_forward_to_pre_char, "=")
-      assert.cursor_at(3, 0)
+      assert.cursor_at(3, 1)
     end)
 
     it("post-forward", function()
       h.hop_with_character(ft.hop_forward_to_post_char, "=")
-      assert.cursor_at(3, 2)
+      assert.cursor_at(3, 3)
     end)
 
     it("backward", function()
       h.hop_with_character(ft.hop_backward_to_char, "=")
-      assert.cursor_at(1, 2)
+      assert.cursor_at(1, 3)
     end)
 
     it("pre-backward", function()
       h.hop_with_character(ft.hop_backward_to_pre_char, "=")
-      assert.cursor_at(1, 3)
+      assert.cursor_at(1, 4)
     end)
 
     it("post-backward", function()
       h.hop_with_character(ft.hop_backward_to_post_char, "=")
-      assert.cursor_at(1, 1)
+      assert.cursor_at(1, 2)
     end)
+  end)
+
+  it("multi-byte text", function()
+    h.get_preset("некоторый Текст", { 1, 1 })()
+
+    h.hop_with_character(ft.hop_forward_to_char, "Т")
+    assert.cursor_at(1, 11)
+  end)
+
+  it("multi-column text", function()
+    local double_tab = "		"
+    local buffer = "text" .. double_tab .. "here"
+    h.get_preset(buffer, { 1, 1 })()
+
+    h.hop_with_character(ft.hop_forward_to_char, "h")
+    assert.cursor_at(1, 7)
   end)
 end)
