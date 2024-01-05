@@ -5,19 +5,11 @@ local M = {}
 
 M.reset_state = function()
   M._cache = {
-    hop_direction = "forward",
-    rh_options = nil,
+    last_hop_rh_options = nil,
     changing_rh_options = nil,
   }
 end
 M.reset_state()
-
-M._cache_options = function(rh_options)
-  if utils.mode() == "operator-pending" then
-    M._cache.changing_rh_options = rh_options
-  end
-  M._cache.rh_options = rh_options
-end
 
 local repeat_last_operator_pending_motion = function()
   local last_changing_rh_options = M._cache.changing_rh_options
@@ -67,8 +59,11 @@ M.hop = function(ignore_char_case, direction, offset)
     rh_options.insert_mode_target_side = "right"
   end
 
-  M._cache.hop_direction = rh_options.direction
-  M._cache_options(rh_options)
+  M._cache.last_hop_rh_options = rh_options
+  if utils.mode() == "operator-pending" then
+    M._cache.changing_rh_options = rh_options
+  end
+
   rabbit_hop.hop(rh_options)
 end
 
@@ -80,24 +75,28 @@ M.repeat_forward = function(use_relative_repetition)
     return
   end
 
-  if M._cache.rh_options == nil then
+  if M._cache.last_hop_rh_options == nil then
     return
   end
 
   local rh_options = {
-    pattern = M._cache.rh_options.pattern,
-    offset = M._cache.rh_options.offset,
+    pattern = M._cache.last_hop_rh_options.pattern,
+    offset = M._cache.last_hop_rh_options.offset,
     direction = "forward",
     insert_mode_target_side = "left",
     count = vim.v.count1,
   }
 
-  if use_relative_repetition and M._cache.hop_direction == "backward" then
+  local last_hop_direction = M._cache.last_hop_rh_options.direction
+  if use_relative_repetition and last_hop_direction == "backward" then
     rh_options.direction = "backward"
     rh_options.insert_mode_target_side = "right"
   end
 
-  M._cache_options(rh_options)
+  if utils.mode() == "operator-pending" then
+    M._cache.changing_rh_options = rh_options
+  end
+
   rabbit_hop.hop(rh_options)
 end
 
@@ -109,24 +108,28 @@ M.repeat_backward = function(use_relative_repetition)
     return
   end
 
-  if M._cache.rh_options == nil then
+  if M._cache.last_hop_rh_options == nil then
     return
   end
 
   local rh_options = {
-    pattern = M._cache.rh_options.pattern,
-    offset = M._cache.rh_options.offset,
+    pattern = M._cache.last_hop_rh_options.pattern,
+    offset = M._cache.last_hop_rh_options.offset,
     direction = "backward",
     insert_mode_target_side = "right",
     count = vim.v.count1,
   }
 
-  if use_relative_repetition and M._cache.hop_direction == "backward" then
+  local last_hop_direction = M._cache.last_hop_rh_options.direction
+  if use_relative_repetition and last_hop_direction == "backward" then
     rh_options.direction = "forward"
     rh_options.insert_mode_target_side = "left"
   end
 
-  M._cache_options(rh_options)
+  if utils.mode() == "operator-pending" then
+    M._cache.changing_rh_options = rh_options
+  end
+
   rabbit_hop.hop(rh_options)
 end
 
