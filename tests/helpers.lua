@@ -86,8 +86,10 @@ M.trigger_delete = function()
 end
 
 M.reset_mode = function()
+  local exit = vim.api.nvim_replace_termcodes("<C-\\><C-n>", true, false, true)
   local escape = vim.api.nvim_replace_termcodes("<esc>", true, false, true)
-  vim.api.nvim_feedkeys(escape, "nx", false)
+  vim.api.nvim_feedkeys(exit, "nx", false)
+  vim.api.nvim_feedkeys(escape, "n", false)
 end
 
 ---@param keys string

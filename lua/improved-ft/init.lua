@@ -30,7 +30,7 @@ end
 ---@return function
 local get_hop = function(direction, offset)
   return function()
-    char_hops.hop(M.cfg.ignore_char_case, direction, offset)
+    return char_hops.hop(M.cfg.ignore_char_case, direction, offset)
   end
 end
 

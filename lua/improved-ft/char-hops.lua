@@ -48,10 +48,16 @@ M.hop = function(ignore_char_case, direction, offset)
     return
   end
 
+  local pattern = utils.get_user_inputed_pattern(ignore_char_case)
+  if pattern == nil then
+    utils.reset_mode()
+    return
+  end
+
   local rh_options = {
     direction = direction,
     offset = offset,
-    pattern = utils.get_user_inputed_pattern(ignore_char_case),
+    pattern = pattern,
     count = vim.v.count1,
   }
 
