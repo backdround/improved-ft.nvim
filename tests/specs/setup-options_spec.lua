@@ -119,7 +119,7 @@ describe("setup-options", function()
   end)
 
   local description =
-    "use_repetition_relative_offset == true should adjust offset according to the direction"
+    "use_relative_repetition_offsets == true should adjust offset according to the direction"
   describe(description, function()
     before_each(function()
       h.get_preset([[
@@ -127,11 +127,11 @@ describe("setup-options", function()
         b = | words
         c = a word a word and other words
       ]], { 2, 5 })()
-      ft.setup({ use_repetition_relative_offset = true })
+      ft.setup({ use_relative_repetition_offsets = true })
     end)
 
     after_each(function()
-      ft.setup({ use_repetition_relative_offset = false })
+      ft.setup({ use_relative_repetition_offsets = false })
     end)
 
     describe("repeat_forward", function()

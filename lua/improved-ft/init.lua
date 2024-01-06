@@ -3,14 +3,14 @@ local char_hops = require("improved-ft.char-hops")
 ---@class IFT_Conifg
 ---@field ignore_char_case boolean
 ---@field use_relative_repetition boolean
----@field use_repetition_relative_offset boolean
+---@field use_relative_repetition_offsets boolean
 
 local M = {
   ---@type IFT_Conifg
   cfg = {
     ignore_char_case = false,
     use_relative_repetition = false,
-    use_repetition_relative_offset = false,
+    use_relative_repetition_offsets = false,
   },
 }
 
@@ -22,7 +22,7 @@ local get_repeat = function(direction)
     char_hops.repeat_hop(
       direction,
       M.cfg.use_relative_repetition,
-      M.cfg.use_repetition_relative_offset
+      M.cfg.use_relative_repetition_offsets
     )
   end
 end
@@ -48,10 +48,10 @@ M.hop_backward_to_char = get_hop("backward", 0)
 M.hop_backward_to_post_char = get_hop("backward", -1)
 
 ---@class IFT_SetupOptions
----@field use_default_mappings? boolean
----@field ignore_char_case? boolean
----@field use_relative_repetition? boolean
----@field use_repetition_relative_offset? boolean
+---@field use_default_mappings? boolean Maps default f/F/t/T/;/, keys.
+---@field ignore_char_case? boolean Ignores case of the given characters.
+---@field use_relative_repetition? boolean Uses direction-relative directions during repetition.
+---@field use_relative_repetition_offsets? boolean Uses direction-relative offsets during repetition hops.
 
 ---@param opts? IFT_SetupOptions
 M.setup = function(opts)
@@ -61,8 +61,8 @@ M.setup = function(opts)
     M.cfg.use_relative_repetition = opts.use_relative_repetition
   end
 
-  if opts.use_repetition_relative_offset ~= nil then
-    M.cfg.use_repetition_relative_offset = opts.use_repetition_relative_offset
+  if opts.use_relative_repetition_offsets ~= nil then
+    M.cfg.use_relative_repetition_offsets = opts.use_relative_repetition_offsets
   end
 
   if opts.ignore_char_case ~= nil then

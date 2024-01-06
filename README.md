@@ -39,7 +39,7 @@ Additional features:
 ```lua
 local ft = require("improved-ft")
 ft.setup({
-  -- Maps default f/F/t/T/;/, keys
+  -- Maps default f/F/t/T/;/, keys.
   -- default: false
   use_default_mappings = true,
 
@@ -47,13 +47,13 @@ ft.setup({
   -- default: false
   ignore_char_case = true,
 
-  -- Takes a last jump direction into account during repetition jumps.
+  -- Takes a last hop direction into account during repetition hops
   -- default: false
   use_relative_repetition = true,
 
-  -- Use direction-relative offsets during repetition.
+  -- Uses direction-relative offsets during repetition hops.
   -- default: false
-  use_repetition_relative_offset = true,
+  use_relative_repetition_offsets = true,
 })
 ```
 ### Advanced configuration
