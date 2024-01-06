@@ -3,12 +3,14 @@ local char_hops = require("improved-ft.char-hops")
 ---@class IFT_Conifg
 ---@field ignore_char_case boolean
 ---@field use_relative_repetition boolean
+---@field use_repetition_relative_offset boolean
 
 local M = {
   ---@type IFT_Conifg
   cfg = {
     ignore_char_case = false,
     use_relative_repetition = false,
+    use_repetition_relative_offset = false,
   },
 }
 
@@ -17,11 +19,11 @@ M._reset_state = char_hops.reset_state
 ---@param direction "forward"|"backward"
 local get_repeat = function(direction)
   return function()
-    if direction == "forward" then
-      char_hops.repeat_forward(M.cfg.use_relative_repetition)
-    else
-      char_hops.repeat_backward(M.cfg.use_relative_repetition)
-    end
+    char_hops.repeat_hop(
+      direction,
+      M.cfg.use_relative_repetition,
+      M.cfg.use_repetition_relative_offset
+    )
   end
 end
 
@@ -49,6 +51,7 @@ M.hop_backward_to_post_char = get_hop("backward", -1)
 ---@field use_default_mappings? boolean
 ---@field ignore_char_case? boolean
 ---@field use_relative_repetition? boolean
+---@field use_repetition_relative_offset? boolean
 
 ---@param opts? IFT_SetupOptions
 M.setup = function(opts)
@@ -56,6 +59,10 @@ M.setup = function(opts)
 
   if opts.use_relative_repetition ~= nil then
     M.cfg.use_relative_repetition = opts.use_relative_repetition
+  end
+
+  if opts.use_repetition_relative_offset ~= nil then
+    M.cfg.use_repetition_relative_offset = opts.use_repetition_relative_offset
   end
 
   if opts.ignore_char_case ~= nil then

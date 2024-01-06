@@ -50,6 +50,10 @@ ft.setup({
   -- Takes a last jump direction into account during repetition jumps.
   -- default: false
   use_relative_repetition = true,
+
+  -- Use direction-relative offsets during repetition.
+  -- default: false
+  use_repetition_relative_offset = true,
 })
 ```
 ### Advanced configuration

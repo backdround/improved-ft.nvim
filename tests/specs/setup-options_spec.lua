@@ -117,4 +117,73 @@ describe("setup-options", function()
       end)
     end)
   end)
+
+  local description =
+    "use_repetition_relative_offset == true should adjust offset according to the direction"
+  describe(description, function()
+    before_each(function()
+      h.get_preset([[
+        a = a word a word and other words
+        b = | words
+        c = a word a word and other words
+      ]], { 2, 5 })()
+      ft.setup({ use_repetition_relative_offset = true })
+    end)
+
+    after_each(function()
+      ft.setup({ use_repetition_relative_offset = false })
+    end)
+
+    describe("repeat_forward", function()
+      it("with pre offset", function()
+        h.hop_with_character(ft.hop_backward_to_pre_char, "w")
+        assert.cursor_at(1, 30)
+        h.perform_through_keymap(ft.repeat_forward, true)
+        assert.cursor_at(2, 6)
+
+        h.hop_with_character(ft.hop_forward_to_pre_char, "a")
+        assert.cursor_at(3, 4)
+        h.perform_through_keymap(ft.repeat_forward, true)
+        assert.cursor_at(3, 11)
+      end)
+
+      it("with post offset", function()
+        h.hop_with_character(ft.hop_backward_to_post_char, "w")
+        assert.cursor_at(1, 28)
+        h.perform_through_keymap(ft.repeat_forward, true)
+        assert.cursor_at(1, 30)
+
+        h.hop_with_character(ft.hop_forward_to_post_char, "a")
+        assert.cursor_at(3, 6)
+        h.perform_through_keymap(ft.repeat_forward, true)
+        assert.cursor_at(3, 13)
+      end)
+    end)
+
+    describe("repeat_backward", function()
+      it("with pre offset", function()
+        h.hop_with_character(ft.hop_forward_to_pre_char, "w")
+        assert.cursor_at(2, 6)
+        h.perform_through_keymap(ft.repeat_backward, true)
+        assert.cursor_at(1, 30)
+
+        h.hop_with_character(ft.hop_backward_to_pre_char, "a")
+        assert.cursor_at(1, 20)
+        h.perform_through_keymap(ft.repeat_backward, true)
+        assert.cursor_at(1, 13)
+      end)
+
+      it("with post offset", function()
+        h.hop_with_character(ft.hop_forward_to_post_char, "w")
+        assert.cursor_at(2, 8)
+        h.perform_through_keymap(ft.repeat_backward, true)
+        assert.cursor_at(2, 6)
+
+        h.hop_with_character(ft.hop_backward_to_post_char, "a")
+        assert.cursor_at(1, 18)
+        h.perform_through_keymap(ft.repeat_backward, true)
+        assert.cursor_at(1, 11)
+      end)
+    end)
+  end)
 end)

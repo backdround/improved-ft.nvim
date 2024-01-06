@@ -67,63 +67,74 @@ M.hop = function(ignore_char_case, direction, offset)
   rabbit_hop.hop(rh_options)
 end
 
----Repeats last hop forward.
----@param use_relative_repetition boolean
-M.repeat_forward = function(use_relative_repetition)
-  if utils.is_vim_repeat() then
-    repeat_last_operator_pending_motion()
-    return
-  end
-
-  if M._cache.last_hop_rh_options == nil then
-    return
+---@param direction "forward"|"backward"
+---@param direction_is_relative boolean direction is relative to a last hop direction
+---@param offset_is_relative boolean offset is relative to a last hop direction
+---@return RH_ApiHopOptions?
+M._get_repetition_options = function(
+  direction,
+  direction_is_relative,
+  offset_is_relative
+)
+  local last_hop_options = M._cache.last_hop_rh_options
+  if last_hop_options == nil then
+    return nil
   end
 
   local rh_options = {
-    pattern = M._cache.last_hop_rh_options.pattern,
-    offset = M._cache.last_hop_rh_options.offset,
-    direction = "forward",
-    insert_mode_target_side = "left",
+    pattern = last_hop_options.pattern,
     count = vim.v.count1,
   }
 
-  local last_hop_direction = M._cache.last_hop_rh_options.direction
-  if use_relative_repetition and last_hop_direction == "backward" then
-    rh_options.direction = "backward"
+  -- Set direction
+  local invert_direction = last_hop_options.direction == "backward"
+    and direction_is_relative
+
+  rh_options.direction = direction
+  if invert_direction then
+    if direction == "forward" then
+      rh_options.direction = "backward"
+    else
+      rh_options.direction = "forward"
+    end
+  end
+
+  -- Set insert_mode_target_side
+  if rh_options.direction == "forward" then
+    rh_options.insert_mode_target_side = "left"
+  else
     rh_options.insert_mode_target_side = "right"
   end
 
-  if utils.mode() == "operator-pending" then
-    M._cache.changing_rh_options = rh_options
+  -- Set offset
+  local move_other_side = rh_options.direction ~= last_hop_options.direction
+  if offset_is_relative and move_other_side then
+    rh_options.offset = last_hop_options.offset * -1
+  else
+    rh_options.offset = last_hop_options.offset
   end
 
-  rabbit_hop.hop(rh_options)
+  return rh_options
 end
 
----Repeats last hop backward.
----@param use_relative_repetition boolean
-M.repeat_backward = function(use_relative_repetition)
+---Repeats last hop.
+---@param direction "forward"|"backward"
+---@param direction_is_relative boolean direction is relative to a last hop direction
+---@param offset_is_relative boolean offset is relative to a last hop direction
+M.repeat_hop = function(direction, direction_is_relative, offset_is_relative)
   if utils.is_vim_repeat() then
     repeat_last_operator_pending_motion()
     return
   end
 
-  if M._cache.last_hop_rh_options == nil then
+  local rh_options = M._get_repetition_options(
+    direction,
+    direction_is_relative,
+    offset_is_relative
+  )
+
+  if rh_options == nil then
     return
-  end
-
-  local rh_options = {
-    pattern = M._cache.last_hop_rh_options.pattern,
-    offset = M._cache.last_hop_rh_options.offset,
-    direction = "backward",
-    insert_mode_target_side = "right",
-    count = vim.v.count1,
-  }
-
-  local last_hop_direction = M._cache.last_hop_rh_options.direction
-  if use_relative_repetition and last_hop_direction == "backward" then
-    rh_options.direction = "forward"
-    rh_options.insert_mode_target_side = "left"
   end
 
   if utils.mode() == "operator-pending" then
