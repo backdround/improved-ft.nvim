@@ -1,4 +1,4 @@
-local rabbit_hop = require("improved-ft.rabbit-hop.api")
+local rabbit_hop = require("improved-ft.rabbit-hop.lua.rabbit-hop.api")
 local utils = require("improved-ft.utils")
 
 local M = {}
