@@ -1,4 +1,6 @@
-local char_hops = require("improved-ft.char-hops")
+local lazy_char_hops = function()
+  return require("improved-ft.char-hops")
+end
 
 ---@class IFT_Conifg
 ---@field ignore_char_case boolean
@@ -14,12 +16,14 @@ local M = {
   },
 }
 
-M._reset_state = char_hops.reset_state
+M._reset_state = function()
+  return lazy_char_hops().reset_state()
+end
 
 ---@param direction "forward"|"backward"
 local get_repeat = function(direction)
   return function()
-    char_hops.repeat_hop(
+    lazy_char_hops().repeat_hop(
       direction,
       M.cfg.use_relative_repetition,
       M.cfg.use_relative_repetition_offsets
@@ -32,7 +36,7 @@ end
 ---@return function
 local get_hop = function(direction, offset)
   return function()
-    return char_hops.hop(M.cfg.ignore_char_case, direction, offset)
+    return lazy_char_hops().hop(M.cfg.ignore_char_case, direction, offset)
   end
 end
 
