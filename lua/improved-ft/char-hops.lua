@@ -22,6 +22,7 @@ local repeat_last_operator_pending_motion = function()
     direction = last_changing_rh_options.direction,
     offset = last_changing_rh_options.offset,
     insert_mode_target_side = last_changing_rh_options.insert_mode_target_side,
+    fold_policy = last_changing_rh_options.fold_policy,
   }
 
   if vim.v.count ~= 0 then
@@ -51,6 +52,7 @@ M.hop = function(ignore_char_case, direction, offset)
     offset = offset,
     pattern = pattern,
     count = vim.v.count1,
+    fold_policy = "ignore",
   }
 
   if rh_options.direction == "forward" then
@@ -84,6 +86,7 @@ M._get_repetition_options = function(
   local rh_options = {
     pattern = last_hop_options.pattern,
     count = vim.v.count1,
+    fold_policy = "ignore",
   }
 
   -- Set direction
