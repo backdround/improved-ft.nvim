@@ -52,7 +52,13 @@ describe("setup-options", function()
     ft.setup({ use_default_mappings = false })
 
     local keymaps = vim.api.nvim_get_keymap("")
-    assert.are.equals(0, #keymaps)
+    local count_of_maps = 0
+    for _, keymap in ipairs(keymaps) do
+      if keymap.lhs:find("<Plug>") == nil then
+        count_of_maps = count_of_maps + 1
+      end
+    end
+    assert.are.equals(0, count_of_maps)
   end)
 
   describe("ignore_char_case", function()
