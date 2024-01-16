@@ -6,48 +6,51 @@ local M = {
   hop_dot_plug = "<Plug>(improved-ft-dot-hop)",
 }
 
+M.reset_state = function()
+  M.last_real_rh_options = nil
+  M.rh_options_to_perform = nil
+  M.rh_dot_options_to_perform = nil
+end
+M.reset_state()
+
 vim.keymap.set({ "n", "x", "o", "i" }, M.hop_plug, function()
-  if M.rh_hop_options ~= nil then
-    rabbit_hop.hop(M.rh_hop_options)
+  if M.rh_options_to_perform ~= nil then
+    rabbit_hop.hop(M.rh_options_to_perform)
   end
 end)
 
 vim.keymap.set({ "n", "x", "o", "i" }, M.hop_dot_plug, function()
-  if M.rh_dot_hop_options ~= nil then
+  if M.rh_dot_options_to_perform ~= nil then
     if vim.v.count ~= 0 then
-      M.rh_dot_hop_options.count = vim.v.count
+      M.rh_dot_options_to_perform.count = vim.v.count
     end
-    rabbit_hop.hop(M.rh_dot_hop_options)
+    rabbit_hop.hop(M.rh_dot_options_to_perform)
   end
 end)
 
-M.reset_state = function()
-  M._cache = {
-    last_hop_rh_options = nil,
-  }
-  M.rh_hop_options = nil
-  M.rh_dot_hop_options = nil
-end
-M.reset_state()
-
-M.perform = function(rh_options)
+---Performs hop through a <Plug>(...) mapping. It's required for correct
+---dot and macro repetitions.
+---@param rh_options RH_ApiHopOptions
+---@return string mappings to use by a mapping with { expr = true }
+M._perform = function(rh_options)
   if utils.mode() ~= "operator-pending" then
-    M.rh_hop_options = rh_options
+    M.rh_options_to_perform = rh_options
     return M.hop_plug
   end
 
-  M.rh_dot_hop_options = rh_options
+  M.rh_dot_options_to_perform = rh_options
   return M.hop_dot_plug
 end
 
 ---@param ignore_char_case boolean
 ---@param direction "forward"|"backward"
 ---@param offset number
+---@return string mappings to use by a mapping with { expr = true }
 M.hop = function(ignore_char_case, direction, offset)
   local pattern = utils.get_user_inputed_pattern(ignore_char_case)
   if pattern == nil then
     utils.reset_mode()
-    return
+    return ""
   end
 
   local rh_options = {
@@ -64,22 +67,19 @@ M.hop = function(ignore_char_case, direction, offset)
     rh_options.insert_mode_target_side = "right"
   end
 
-  M._cache.last_hop_rh_options = rh_options
-  return M.perform(rh_options)
+  M.last_real_rh_options = rh_options
+  return M._perform(rh_options)
 end
 
+---Repeats last hop.
 ---@param direction "forward"|"backward"
 ---@param direction_is_relative boolean direction is relative to a last hop direction
 ---@param offset_is_relative boolean offset is relative to a last hop direction
----@return RH_ApiHopOptions?
-M._get_repetition_options = function(
-  direction,
-  direction_is_relative,
-  offset_is_relative
-)
-  local last_hop_options = M._cache.last_hop_rh_options
+---@return string mappings to use by a mapping with { expr = true }
+M.repeat_hop = function(direction, direction_is_relative, offset_is_relative)
+  local last_hop_options = M.last_real_rh_options
   if last_hop_options == nil then
-    return nil
+    return ""
   end
 
   local rh_options = {
@@ -116,25 +116,7 @@ M._get_repetition_options = function(
     rh_options.offset = last_hop_options.offset
   end
 
-  return rh_options
-end
-
----Repeats last hop.
----@param direction "forward"|"backward"
----@param direction_is_relative boolean direction is relative to a last hop direction
----@param offset_is_relative boolean offset is relative to a last hop direction
-M.repeat_hop = function(direction, direction_is_relative, offset_is_relative)
-  local rh_options = M._get_repetition_options(
-    direction,
-    direction_is_relative,
-    offset_is_relative
-  )
-
-  if rh_options == nil then
-    return
-  end
-
-  return M.perform(rh_options)
+  return M._perform(rh_options)
 end
 
 return M
