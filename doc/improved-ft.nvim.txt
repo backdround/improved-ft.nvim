@@ -57,6 +57,7 @@ Basic mappings ~
     local map = function(key, fn, description)
       vim.keymap.set({ "n", "x", "o" }, key, fn, {
         desc = description,
+        expr = true,
       })
     end
     
@@ -76,6 +77,7 @@ Post character mappings ~
     local map = function(key, fn, description)
       vim.keymap.set({ "n", "x", "o" }, key, fn, {
         desc = description,
+        expr = true,
       })
     end
     
@@ -89,6 +91,7 @@ Insert mode mappings ~
     local imap = function(key, fn, description)
       vim.keymap.set("i", key, fn, {
         desc = description,
+        expr = true,
       })
     end
     
