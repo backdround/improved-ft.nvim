@@ -48,8 +48,11 @@ end
 ---@return string mappings to use by a mapping with { expr = true }
 M.hop = function(ignore_char_case, direction, offset)
   local pattern = utils.get_user_inputed_pattern(ignore_char_case)
+
   if pattern == nil then
-    utils.reset_mode()
+    if utils.mode() == "operator-pending" then
+      return "<Esc>"
+    end
     return ""
   end
 
@@ -78,7 +81,11 @@ end
 ---@return string mappings to use by a mapping with { expr = true }
 M.repeat_hop = function(direction, direction_is_relative, offset_is_relative)
   local last_hop_options = M.last_real_rh_options
+
   if last_hop_options == nil then
+    if utils.mode() == "operator-pending" then
+      return "<Esc>"
+    end
     return ""
   end
 

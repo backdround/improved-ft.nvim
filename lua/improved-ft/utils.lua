@@ -41,11 +41,4 @@ M.get_user_inputed_pattern = function(ignore_char_case)
   return pattern
 end
 
-M.reset_mode = function()
-  local exit = replace_termcodes("<C-\\><C-n>")
-  local escape = replace_termcodes("<Esc>")
-  vim.api.nvim_feedkeys(exit, "nx", false)
-  vim.api.nvim_feedkeys(escape, "n", false)
-end
-
 return M
