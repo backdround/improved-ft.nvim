@@ -19,25 +19,6 @@ M.mode = function()
   end
 end
 
----Returns current neovim repeat state.
----@return boolean
-M.is_vim_repeat = function()
-  if M._is_repeat == nil then
-    M._is_repeat = false
-    -- Add repeat tracker
-    vim.on_key(function(key)
-      if key == "." then
-        M._is_repeat = true
-        vim.schedule(function()
-          M._is_repeat = false
-        end)
-      end
-    end)
-  end
-
-  return M._is_repeat
-end
-
 ---Returns user's pattern to hop
 ---@param ignore_char_case boolean
 ---@return string?

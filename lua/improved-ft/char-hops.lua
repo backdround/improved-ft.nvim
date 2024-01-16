@@ -1,46 +1,49 @@
 local rabbit_hop = require("improved-ft.rabbit-hop.lua.rabbit-hop.api")
 local utils = require("improved-ft.utils")
 
-local M = {}
+local M = {
+  hop_plug = "<Plug>(improved-ft-hop)",
+  hop_dot_plug = "<Plug>(improved-ft-dot-hop)",
+}
+
+vim.keymap.set({ "n", "x", "o", "i" }, M.hop_plug, function()
+  if M.rh_hop_options ~= nil then
+    rabbit_hop.hop(M.rh_hop_options)
+  end
+end)
+
+vim.keymap.set({ "n", "x", "o", "i" }, M.hop_dot_plug, function()
+  if M.rh_dot_hop_options ~= nil then
+    if vim.v.count ~= 0 then
+      M.rh_dot_hop_options.count = vim.v.count
+    end
+    rabbit_hop.hop(M.rh_dot_hop_options)
+  end
+end)
 
 M.reset_state = function()
   M._cache = {
     last_hop_rh_options = nil,
-    changing_rh_options = nil,
   }
+  M.rh_hop_options = nil
+  M.rh_dot_hop_options = nil
 end
 M.reset_state()
 
-local repeat_last_operator_pending_motion = function()
-  local last_changing_rh_options = M._cache.changing_rh_options
-  if last_changing_rh_options == nil then
-    return
+M.perform = function(rh_options)
+  if utils.mode() ~= "operator-pending" then
+    M.rh_hop_options = rh_options
+    return M.hop_plug
   end
 
-  local rh_options = {
-    pattern = last_changing_rh_options.pattern,
-    direction = last_changing_rh_options.direction,
-    offset = last_changing_rh_options.offset,
-    insert_mode_target_side = last_changing_rh_options.insert_mode_target_side,
-    fold_policy = last_changing_rh_options.fold_policy,
-  }
-
-  if vim.v.count ~= 0 then
-    rh_options.count = vim.v.count
-  end
-
-  rabbit_hop.hop(rh_options)
+  M.rh_dot_hop_options = rh_options
+  return M.hop_dot_plug
 end
 
 ---@param ignore_char_case boolean
 ---@param direction "forward"|"backward"
 ---@param offset number
 M.hop = function(ignore_char_case, direction, offset)
-  if utils.is_vim_repeat() then
-    repeat_last_operator_pending_motion()
-    return
-  end
-
   local pattern = utils.get_user_inputed_pattern(ignore_char_case)
   if pattern == nil then
     utils.reset_mode()
@@ -62,11 +65,7 @@ M.hop = function(ignore_char_case, direction, offset)
   end
 
   M._cache.last_hop_rh_options = rh_options
-  if utils.mode() == "operator-pending" then
-    M._cache.changing_rh_options = rh_options
-  end
-
-  rabbit_hop.hop(rh_options)
+  return M.perform(rh_options)
 end
 
 ---@param direction "forward"|"backward"
@@ -125,11 +124,6 @@ end
 ---@param direction_is_relative boolean direction is relative to a last hop direction
 ---@param offset_is_relative boolean offset is relative to a last hop direction
 M.repeat_hop = function(direction, direction_is_relative, offset_is_relative)
-  if utils.is_vim_repeat() then
-    repeat_last_operator_pending_motion()
-    return
-  end
-
   local rh_options = M._get_repetition_options(
     direction,
     direction_is_relative,
@@ -140,11 +134,7 @@ M.repeat_hop = function(direction, direction_is_relative, offset_is_relative)
     return
   end
 
-  if utils.mode() == "operator-pending" then
-    M._cache.changing_rh_options = rh_options
-  end
-
-  rabbit_hop.hop(rh_options)
+  return M.perform(rh_options)
 end
 
 return M

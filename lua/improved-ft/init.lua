@@ -23,7 +23,7 @@ end
 ---@param direction "forward"|"backward"
 local get_repeat = function(direction)
   return function()
-    lazy_char_hops().repeat_hop(
+    return lazy_char_hops().repeat_hop(
       direction,
       M.cfg.use_relative_repetition,
       M.cfg.use_relative_repetition_offsets
@@ -77,6 +77,7 @@ M.setup = function(opts)
     local map = function(key, fn, description)
       vim.keymap.set({ "n", "x", "o" }, key, fn, {
         desc = description,
+        expr = true,
       })
     end
 
@@ -87,7 +88,6 @@ M.setup = function(opts)
     map(";", M.repeat_forward, "Repeat hop forward to a last given char")
     map(",", M.repeat_backward, "Repeat hop backward to a last given char")
   end
-
   M._reset_state()
 end
 
