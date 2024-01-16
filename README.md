@@ -64,6 +64,7 @@ ft.setup({
 local map = function(key, fn, description)
   vim.keymap.set({ "n", "x", "o" }, key, fn, {
     desc = description,
+    expr = true,
   })
 end
 
@@ -85,6 +86,7 @@ map(",", ft.repeat_backward, "Repeat hop backward to a last given char")
 local map = function(key, fn, description)
   vim.keymap.set({ "n", "x", "o" }, key, fn, {
     desc = description,
+    expr = true,
   })
 end
 
@@ -101,6 +103,7 @@ map("S", ft.hop_backward_to_post_char, "Hop backward after a given char")
 local imap = function(key, fn, description)
   vim.keymap.set("i", key, fn, {
     desc = description,
+    expr = true,
   })
 end
 
