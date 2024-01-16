@@ -66,7 +66,7 @@ describe("dot `.` repeat", function()
   end)
 
   it("should work with custom-operators", function()
-    vim.keymap.set("n", "f", ft.hop_forward_to_char)
+    vim.keymap.set("n", "f", ft.hop_forward_to_char, { expr = true })
 
     local start_column = nil
     local end_column = nil
@@ -90,7 +90,7 @@ describe("dot `.` repeat", function()
   end)
 
   it("should work in macros that uses dot", function()
-    vim.keymap.set("n", "f", ft.hop_forward_to_char)
+    vim.keymap.set("n", "f", ft.hop_forward_to_char, { expr = true })
 
     vim.api.nvim_feedkeys("dwu", "ntx", true)
     vim.fn.setreg("a", ".fw")

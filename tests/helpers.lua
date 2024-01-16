@@ -78,7 +78,11 @@ end
 M.trigger_visual = function()
   vim.api.nvim_feedkeys("v", "n", false)
   -- Wait for visual mode to take place.
-  M.perform_through_keymap(function() end, true)
+  local plug_label = "<Plug>(perform_through_keymap)"
+  local plug_key = vim.api.nvim_replace_termcodes(plug_label, true, false, true)
+
+  vim.keymap.set({ "n", "o", "x", "i" }, plug_label, function() end)
+  vim.api.nvim_feedkeys(plug_key, "x", false)
 end
 
 M.trigger_delete = function()
@@ -114,7 +118,9 @@ M.remove_all_mappings = function()
   local keymaps = vim.api.nvim_get_keymap("")
 
   for _, keymap in ipairs(keymaps) do
-    vim.keymap.del(keymap.mode, keymap.lhs)
+    if keymap.lhs:find("<Plug>") == nil then
+      vim.keymap.del(keymap.mode, keymap.lhs)
+    end
   end
 end
 
@@ -131,7 +137,7 @@ end
 ---@param wait_for_finish boolean
 M.perform_through_keymap = function(fn, wait_for_finish)
   local map_label = "<Plug>(perform_through_keymap)"
-  vim.keymap.set({ "n", "o", "x", "i" }, map_label, fn)
+  vim.keymap.set({ "n", "o", "x", "i" }, map_label, fn, { expr = true })
   local keys = vim.api.nvim_replace_termcodes(map_label, true, false, true)
 
   local feedkeys_flags = wait_for_finish and "x" or ""
